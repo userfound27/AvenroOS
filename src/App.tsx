@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
 import { supabase } from "./lib/supabase";
-const AVENROOS_ICON = "/avenroos-pwa-icon.svg?v=5";
+const AVENROOS_ICON = "/avenroos-logo.webp?v=6";
 import { ArrowUpRight, BookOpen, CalendarDays, Check, ChevronRight, Clock3, Command, Flame, Gauge, GraduationCap, LayoutDashboard, Menu, Pencil, Plus, LogOut, Settings, Sparkles, Target, Trash2, Trophy, TrendingUp, Upload, UserRound, X, Zap } from "lucide-react";
 
 type Page = "dashboard" | "study" | "exams" | "scores" | "focus" | "journey" | "settings";
