@@ -1,6 +1,6 @@
-const CACHE_PREFIX = "studentos-";
-const CACHE_NAME = "studentos-shell-v2";
-const APP_SHELL = ["/studentos-favicon.png","/manifest.json"];
+const CACHE_PREFIX = "avenroos-";
+const CACHE_NAME = "avenroos-shell-v2";
+const APP_SHELL = ["/avenroos-favicon.png","/manifest.json"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
