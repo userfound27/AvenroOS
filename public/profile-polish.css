@@ -2509,3 +2509,28 @@ button,input,select,textarea{font-family:inherit}
     padding-bottom:max(64px, env(safe-area-inset-bottom)) !important;
   }
 }
+
+/* Dashboard hierarchy: make the next action visually dominant */
+.dashboard-stack{gap:18px}
+.priority-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  padding:22px 24px;
+  border:1px solid #343b45;
+  border-radius:16px;
+  background:linear-gradient(135deg,#151a20,#10151b);
+}
+.priority-copy{min-width:0}
+.priority-copy h3{margin:5px 0 6px;font-size:24px;line-height:1.15;letter-spacing:-.5px}
+.priority-copy p{margin:0;color:#8e97a6;font-size:13px}
+.priority-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.dashboard-primary-grid{margin-top:0}
+.dashboard-secondary-stats{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:-2px}
+@media(max-width:760px){
+  .priority-card{align-items:flex-start;flex-direction:column;padding:19px}
+  .priority-actions{width:100%;flex-wrap:wrap}
+  .priority-actions .primary-btn,.priority-actions .ghost-btn{flex:1}
+  .dashboard-secondary-stats{grid-template-columns:1fr}
+}
