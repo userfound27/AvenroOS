@@ -1,6 +1,6 @@
-# StudentOS
+# AvenroOS
 
-StudentOS is a colorful, practical personal operating system for school.
+AvenroOS is a colorful, practical personal operating system for school.
 
 ## Current build
 
