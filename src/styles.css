@@ -273,3 +273,152 @@
              radial-gradient(circle at 25% 60%,rgba(255,255,255,.035),transparent 20%)!important;
 }
 .orb-two{background:rgba(255,112,74,.055)!important;box-shadow:0 0 70px rgba(255,112,74,.06)!important}
+
+
+/* AvenroOS catalog theme — unified navy / coral visual system */
+:root{
+  --avenro-bg:#0a1017;
+  --avenro-surface:#101a24;
+  --avenro-surface-2:#142230;
+  --avenro-border:#263746;
+  --avenro-text:#eef3f7;
+  --avenro-muted:#81909f;
+  --avenro-coral:#ff6b45;
+  --avenro-coral-soft:#ff9a7e;
+}
+body{background:var(--avenro-bg)}
+.app-shell{
+  background:
+    radial-gradient(circle at 78% -8%,rgba(255,107,69,.09),transparent 25%),
+    radial-gradient(circle at 20% 100%,rgba(57,101,132,.08),transparent 30%),
+    var(--avenro-bg);
+}
+.sidebar{
+  width:238px;
+  background:rgba(13,22,31,.94);
+  border-right:1px solid var(--avenro-border);
+  padding:20px 13px;
+  backdrop-filter:blur(18px);
+}
+.brand-mark{
+  background:var(--avenro-coral);
+  color:#fff;
+  box-shadow:0 10px 28px rgba(255,107,69,.18);
+}
+.brand-mark img,.welcome-brand .brand-mark img,.landing-intro-mark img,.scroll-object-core img,.stage-mark img,.auth-icon img{
+  width:100%;height:100%;object-fit:contain;display:block;
+}
+.brand-mark img{border-radius:inherit}
+.brand{padding-bottom:25px}
+.nav-item{color:#8998a7;border-radius:11px}
+.nav-item:hover{background:#152330;color:#eef3f7}
+.nav-item.active{background:rgba(255,107,69,.12);color:#ffad96}
+.sidebar-bottom{padding-top:12px}
+.free-pill{border-color:var(--avenro-border);background:#111d28}
+.main{background:transparent}
+.topbar{
+  background:rgba(8,14,20,.82);
+  border-bottom-color:rgba(38,55,70,.78);
+}
+.topbar h1{font-size:24px}
+.content{max-width:1380px;padding:32px 38px 64px}
+.hero-card{
+  border-color:#3b302d;
+  background:
+    radial-gradient(circle at 84% 48%,rgba(255,107,69,.20),transparent 27%),
+    linear-gradient(135deg,#151e27,#0f171f);
+  border-radius:22px;
+}
+.hero-card h2{font-size:42px}
+.primary-btn{
+  background:linear-gradient(135deg,#ff6942,#ff815f);
+  color:#111820;
+  border-radius:11px;
+  box-shadow:0 10px 28px rgba(255,107,69,.15);
+}
+.primary-btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.ghost-btn{
+  background:#111c26;
+  border-color:#2b3b49;
+  color:#d4dce3;
+  border-radius:11px;
+}
+.panel,.stat-card{
+  background:rgba(14,24,34,.9);
+  border-color:#263746;
+  border-radius:16px;
+}
+.panel{padding:20px}
+.section-heading h3,.panel h3{font-size:16px}
+.stat-card{min-height:92px}
+.stat-icon{background:rgba(255,107,69,.12);color:var(--avenro-coral);border-radius:11px}
+.task-row:hover{background:#14212c;border-color:#263746}
+.check-btn{border-color:#3b4c5a}
+.task-row.done .check-btn{background:var(--avenro-coral);border-color:var(--avenro-coral)}
+.progress i{background:linear-gradient(90deg,#ff6b45,#ff9a7e)}
+.exam-mini{border-bottom-color:#22313e}
+.date-box{border-color:#344554;background:#13212d}
+.mission-strip{
+  border-color:#3a302e;
+  background:linear-gradient(135deg,#151f28,#111a22);
+  border-radius:16px;
+}
+.mission-icon{background:rgba(255,107,69,.12);color:var(--avenro-coral-soft)}
+.filter.active{background:rgba(255,107,69,.12);border-color:#744333;color:#ffad96}
+.count-pill,.status-pill{border-color:#304150;background:#111d27}
+.focus-card{
+  border-color:#3b302d;
+  background:radial-gradient(circle at 50% 25%,rgba(255,107,69,.15),transparent 43%),#101923;
+}
+.focus-card h2{color:#f1f5f8}
+.settings-panel{overflow:hidden}
+.setting-block{border-bottom-color:#253541}
+.modal{background:#111c26;border-color:#304150}
+.modal-backdrop{background:rgba(2,7,11,.74)}
+input,.setting-input,.field input,.exam-side-controls textarea{
+  background:#0c151e;
+  border-color:#304150;
+}
+input:focus,.setting-input:focus,.field input:focus{border-color:#ff704c;outline:2px solid rgba(255,112,74,.12)}
+/* Keep the exact supplied AvenroOS icon crisp and consistent */
+.sidebar .brand-mark{padding:5px}
+.welcome-brand .brand-mark{padding:5px}
+.landing-intro-mark{padding:14px}
+.auth-icon{padding:9px}
+.scroll-object-core{padding:5px}
+.stage-mark{padding:3px}
+/* Landing page catalog treatment */
+.welcome-shell{
+  background:#080d13;
+}
+.welcome-nav{
+  background:rgba(8,13,19,.78);
+  border-bottom-color:#253541;
+}
+.welcome-brand .brand-mark{
+  background:var(--avenro-coral);
+}
+.nav-auth-btn{
+  background:var(--avenro-coral);
+  border-color:var(--avenro-coral);
+}
+.landing-hero-copy h1 em,
+.landing-manifesto-v2 h2 em,
+.module-heading h2 em,
+.landing-close-v2 h2 em{color:var(--avenro-coral)}
+.landing-eyebrow,.manifesto-index,.module-heading>span,.landing-close-v2>span{color:var(--avenro-coral-soft)}
+.stage-glow{background:radial-gradient(circle,rgba(255,107,69,.15),transparent 68%)}
+.stage-window{background:#101a24;border-color:#2b3b49}
+.stage-mark{background:var(--avenro-coral)}
+.stage-body h2 b,.stage-float svg{color:var(--avenro-coral)}
+.stage-line>i>em{background:var(--avenro-coral)}
+.module-grid-v2 article{background:#101a24;border-color:#263746}
+.module-accent{background:radial-gradient(500px 300px at 80% 30%,rgba(255,107,69,.12),transparent 65%),#101a24!important}
+.module-grid-v2 article svg{color:var(--avenro-coral)}
+.journey-demo em{background:linear-gradient(90deg,#ff6b45,#ff9a7e)}
+.landing-primary-v2{background:var(--avenro-coral)}
+@media(max-width:760px){
+  .sidebar{background:#0e1923}
+  .content{padding-left:17px;padding-right:17px}
+  .hero-card h2{font-size:32px}
+}
