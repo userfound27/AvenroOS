@@ -8,6 +8,6 @@
   "theme_color":"#090b12",
   "description":"A personal operating system for students.",
   "icons":[
-    {"src":"/avenroos-favicon.png","sizes":"any","type":"image/png","purpose":"any maskable"}
+    {"src":"/avenroos-favicon.png?v=2","sizes":"any","type":"image/png","purpose":"any maskable"}
   ]
 }
