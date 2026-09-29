@@ -78,7 +78,7 @@ function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"a
    <span className="toggle-icon toggle-menu"><Menu size={21}/></span><span className="toggle-icon toggle-close"><X size={21}/></span>
   </button>
   <aside className={"sidebar "+(sidebarCollapsed?"collapsed":"")}>
-   <div className="brand"><div className="brand-mark"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div><div><strong>AvenroOS</strong><span>your school operating system</span></div></div>
+   <div className="brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div><strong>AvenroOS</strong><span>your school operating system</span></div></div>
    <nav>
     <NavItem icon={<LayoutDashboard size={18}/>} label="Dashboard" active={page==="dashboard"} onClick={()=>navigate("dashboard")}/>
     <NavItem icon={<BookOpen size={18}/>} label="Study" active={page==="study"} onClick={()=>navigate("study")}/>
@@ -287,17 +287,17 @@ function App(){
   return true;
  };
 
- if(loading)return <div className="welcome-shell auth-loading"><div><div className="auth-icon"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div><strong>Loading AvenroOS…</strong></div></div>;
+ if(loading)return <div className="welcome-shell auth-loading"><div><div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><strong>Loading AvenroOS…</strong></div></div>;
  if(screen==="app")return <AvenroOSApp mode={mode} onExit={exit} onDeleteAccount={deleteAccount} onSignIn={()=>{setAuthMode("signup");setAuthOpen(true);setScreen("welcome")}}/>;
  return <div className="welcome-shell">
-  <header className="welcome-nav"><div className="welcome-brand"><div className="brand-mark"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div><strong>AvenroOS</strong></div><div className="welcome-nav-actions"><button className="nav-auth-link" onClick={enterAnonymous}>Try anonymously</button><button className="nav-auth-btn" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}>Get started <ChevronRight size={16}/></button></div></header>
+  <header className="welcome-nav"><div className="welcome-brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><strong>AvenroOS</strong></div><div className="welcome-nav-actions"><button className="nav-auth-link" onClick={enterAnonymous}>Try anonymously</button><button className="nav-auth-btn" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}>Get started <ChevronRight size={16}/></button></div></header>
   <Welcome onAnonymous={enterAnonymous} openAuth={(m)=>{setAuthMode(m);setAuthOpen(true)}} onSocial={social} error={error}/>
   {anonymousSetupOpen&&<AnonymousSetupModal close={()=>setAnonymousSetupOpen(false)} continueSetup={finishAnonymousSetup} account={false}/>} {accountSetupOpen&&<AnonymousSetupModal close={()=>setAccountSetupOpen(false)} continueSetup={finishAccountSetup} account={true}/>}
   {authOpen&&<AuthModal mode={authMode} setMode={setAuthMode} close={()=>{setAuthOpen(false);setError("")}} onSocial={social} onEmail={emailAuth} error={error}/>}
  </div>
 }
 
-function AnonymousSetupModal(p:{close:()=>void;continueSetup:(displayName:string,journey:string,classLevel:string)=>void|Promise<void>;account:boolean}){const [name,setName]=useState(""),[journey,setJourney]=useState(""),[classLevel,setClassLevel]=useState("");return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal setup-modal" onMouseDown={e=>e.stopPropagation()}><button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button><div className="auth-icon"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div><h1>{p.account?"Welcome to AvenroOS":"Let's set up your AvenroOS"}</h1><p>{p.account?"Your account is ready. Tell us a little about yourself so we can personalize your workspace.":"You're continuing anonymously, so we'll personalize your workspace without creating an account."}</p><label className="field"><span>What should we call you?</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" autoFocus/></label><label className="field"><span>What would you like to name your journey?</span><input value={journey} onChange={e=>setJourney(e.target.value)} placeholder="e.g. 90%+ Mission, Road to Engineering"/></label><label className="field"><span>What class / year are you in?</span><select value={classLevel} onChange={e=>setClassLevel(e.target.value)} aria-label="Class or year"><option value="" disabled>Select your class / year</option><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option><option value="University">University</option></select></label><button className="primary-btn auth-submit reference-continue" onClick={()=>p.continueSetup(name,journey,classLevel)} disabled={!name.trim()||!journey.trim()}>Enter AvenroOS <ChevronRight size={17}/></button><small className="auth-note">{p.account?"You can change these preferences anytime in Settings.":"Anonymous mode stays on this device/session and is not saved to a cloud account."}</small></div></div>}
+function AnonymousSetupModal(p:{close:()=>void;continueSetup:(displayName:string,journey:string,classLevel:string)=>void|Promise<void>;account:boolean}){const [name,setName]=useState(""),[journey,setJourney]=useState(""),[classLevel,setClassLevel]=useState("");return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal setup-modal" onMouseDown={e=>e.stopPropagation()}><button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button><div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><h1>{p.account?"Welcome to AvenroOS":"Let's set up your AvenroOS"}</h1><p>{p.account?"Your account is ready. Tell us a little about yourself so we can personalize your workspace.":"You're continuing anonymously, so we'll personalize your workspace without creating an account."}</p><label className="field"><span>What should we call you?</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" autoFocus/></label><label className="field"><span>What would you like to name your journey?</span><input value={journey} onChange={e=>setJourney(e.target.value)} placeholder="e.g. 90%+ Mission, Road to Engineering"/></label><label className="field"><span>What class / year are you in?</span><select value={classLevel} onChange={e=>setClassLevel(e.target.value)} aria-label="Class or year"><option value="" disabled>Select your class / year</option><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option><option value="University">University</option></select></label><button className="primary-btn auth-submit reference-continue" onClick={()=>p.continueSetup(name,journey,classLevel)} disabled={!name.trim()||!journey.trim()}>Enter AvenroOS <ChevronRight size={17}/></button><small className="auth-note">{p.account?"You can change these preferences anytime in Settings.":"Anonymous mode stays on this device/session and is not saved to a cloud account."}</small></div></div>}
 
 function AuthModal(p:{mode:"signin"|"signup";setMode:(m:"signin"|"signup")=>void;close:()=>void;onSocial:(x:"google"|"notion")=>void;onEmail:(email:string,code?:string)=>Promise<boolean>;error:string}){
  const [email,setEmail]=useState(""),[code,setCode]=useState(""),[codeSent,setCodeSent]=useState(false);
@@ -306,7 +306,7 @@ function AuthModal(p:{mode:"signin"|"signup";setMode:(m:"signin"|"signup")=>void
  const verify=async()=>{if(code.trim().length!==6)return;await p.onEmail(email.trim(),code.trim())};
  return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal auth-reference-modal" onMouseDown={e=>e.stopPropagation()}>
   <button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button>
-  <div className="auth-icon"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div>
+  <div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div>
   <h1>Log in or sign up</h1>
   <p>Save your AvenroOS workspace in the cloud and pick up where you left off on any device.</p>
   <button className="social-btn google-auth" onClick={()=>p.onSocial("google")}><span className="google-g">G</span> Continue with Google <ChevronRight size={16}/></button>
@@ -339,8 +339,8 @@ function Welcome(p:{onAnonymous:()=>void;openAuth:(m:"signin"|"signup")=>void;on
  },[]);
  const drift=(speed:number)=>({transform:`translate3d(0,${Math.min(120,scrollY*speed)}px,0)`});
  return <>
-  {intro&&<div className="landing-intro-v2" aria-hidden="true"><div className="landing-intro-mark"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div><div className="landing-intro-word">AVENROOS</div><div className="landing-intro-line"/></div>}
-  <main className="welcome-main-v2"><div className="scroll-object-v2" style={{transform:`translate3d(0,${Math.min(180,scrollY*.22)}px,0) rotate(${Math.min(28,scrollY*.035)}deg)`}}><div className="scroll-object-core"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div></div>
+  {intro&&<div className="landing-intro-v2" aria-hidden="true"><div className="landing-intro-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div className="landing-intro-word">AVENROOS</div><div className="landing-intro-line"/></div>}
+  <main className="welcome-main-v2"><div className="scroll-object-v2" style={{transform:`translate3d(0,${Math.min(180,scrollY*.22)}px,0) rotate(${Math.min(28,scrollY*.035)}deg)`}}><div className="scroll-object-core"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div></div>
   <section className="landing-hero-v2">
    <div className="landing-hero-copy">
     <div className="landing-eyebrow"><span/> AVENROOS · YOUR SCHOOL OS</div>
@@ -357,7 +357,7 @@ function Welcome(p:{onAnonymous:()=>void;openAuth:(m:"signin"|"signup")=>void;on
     <div className="stage-glow"/>
     <div className="stage-label">LIVE WORKSPACE <span>●</span></div>
     <div className="stage-window">
-      <div className="stage-top"><div className="stage-brand"><div className="stage-mark"><img src="/avenroos-favicon.png?v=4" alt="" aria-hidden="true" /></div> AVENROOS</div><span>MONDAY · 08:42</span></div>
+      <div className="stage-top"><div className="stage-brand"><div className="stage-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div> AVENROOS</div><span>MONDAY · 08:42</span></div>
       <div className="stage-body">
        <span className="stage-kicker">YOUR NEXT MOVE</span>
        <h2>Finish what<br/><b>matters today.</b></h2>
