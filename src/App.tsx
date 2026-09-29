@@ -1,6 +1,189 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
 import { supabase } from "./lib/supabase";
+const AVENROOS_ICON = "data:image/png;base64,aVZCT1J3MEtHZ29BQUFBTlNVaEVVZ0FBQUVBQUFBQkFDQVlBQUFDcWFYSGVB
+QUFYVVVsRVFWUjQyczJiCmFaQmMxM1hmZitmYzkxNVA5OHdBTTlnMGhFZ1FC
+TGhMQUVpSUZpbExzaWpKTnJWUmlsVVZXWW9qV3pKRApPU25GVlU1Vktva1RX
+WFRLa1NzcEw0bExLbHRPWXRGV3BTeGJwaEpyTVUzQk1zVkZKc0hGRkVrUnBF
+eWEKRzdnQ0lEbVl3ZlJNTCsvZWt3L3Z2ZTc3WGpjY1NwL1NOVjA5M1crNzk5
+eHovdWQvbGd1djdpVjJIYW9DCnd2K2ZMeFd3NjY1VCt3R0hLUC9QaVJ1SVlP
+WDNPVmpZdXYvQzF2eStyWXR6VzlLa0ZaekpUQTdrQ1dzSgo1TUJDRHBmT0l1
+Zk93WXM5T05LRDBFL3NyVnR6eVdaU3QrRXpwZCtIQkx5cURJTXA1SWkyQk1E
+SzU5bGcKWUttRjBHdTM4cVBIVjhKTEpPUTU1SG1PdGxON0piZjhwWjVidi8z
+b3laWGp4NDhlQTdvQVppWWl4YTErCmFBRVlpQU1MQUpzM24vTTdCN2EvL3FM
+MnhyNHRtYjF1UHRYZE01azdNekZkU015RVBCU2pkaW1Ra0Jpawpsa3VhYjJC
+T0dLWWRiS2lXNlVBSWdnYUQ0REZSVEJSUlFLUWNyaUFvcUdBVzhCamVLV0pp
+UStjSUlwZ0oKb3RnUTJSaWd4L3RtankwbjJkMFBEL1hCZjNQYmtTZGZmbUh0
+TWNDYklkSGl2WG9CMkhnNE8vN3oyeTk4Cnl3Zm04ZytkUFRqMXJpeDBPeEtH
+aWxjSHZsQTlwRGdiTFQ4RlhDUjZVWkRpd3dDQ0lpSUVIQ0tLS2Nobwo4aUFH
+aG1JaWlCaEJISUtWQXlwR0pnU0NHVUVVd3hEVllDN3p3L2JtdGFPMHZuUEhp
+WTAvLzJjM1BYZ0wKOElRS0JFTk9wdzBUQXFpa2xtM0x6cnZ4N1JkZisrYkJ5
+alV6M1dOYkNIa3BsbXFrb3lFWGR4bE5Rb3RaCmFDa1UxZWhSMVNXdU5OcEtl
+T1VoaWM4dGo2bEV5MUtkeC9nNFZ1aDZYanpUcDVuMXMvbTFvM1J1K3R5VAp5
+Ny8vdTNjK2VvY0tHNmNUZ2pTL0dIRGxuc1UzZi82U3N6NTVRZjdpKzFsYm5n
+MmlWb3pEWStKRVRDTkIKeUhqbEswR01ibGo5N2dwQm1COVBMcDVrTll6NC94
+R3lXU25FU0NCV0NVTEc1MkJXL0ptZ2duUmF2Skp1CmYvRDNudWgrOWxPM2Z1
+OEdFVTdhRkNHNHBpUXVQMi8rOGkrKzRjeGYyenM0ZnJXdHZweUpxWWx6eFhL
+WgppSmlNVlZ1alNZek1vTHFibHVxdmtXaDFiQ29TcmI3SVdGT2tPaDcvUGxy
+dDhjUnJ3aXBCeEtsSTZoQ24KQko5Yng5YVhMdGt4djMvcjlxWHVvY2RmL0w2
+SzlKc3E0R3JDaHAzZnZQTE0vM0JCZnVKOXc5V1RtdUN3CjFJa1F4aXRjUFhR
+MGVhMnZaT1VyUlJ1cnEvVUpOMWRkSWg4YnEzNGxoSnFtbGFzdUZNZVVNY2lF
+WW15aQpLaUgzMXJLTnhmMkxDMmQzVzF1T0huNzIyT01HNFQvRzdyT2FTekQ0
+OGxYbmZQZ2lXWDJ2NzY0bVdYQlkKb2lJbDJJMEhYUTdJWXZ1UGJMTmE5ZEhw
+bFdlMnNSMUhTbElNUHBUblNmazlXaFdzOGtXUlpnQk9HN2dUCkNTa0F3VkNY
+aW9YRTV2MkxGL3lyaStVWDlpNis1andkaTY1NGhGbmg2My8rMGgzdmZPK0Nm
+WnoxN2lKRApDWmFvaUlVU1k3UnUxeUxncXRVdUJlSWttckNNQWEyMndnMzFy
+NzZQN2hQZFA3NTNKZEJLS0txZ3JueEgKbXVLUzRqZHhoWElIUXhVSlE1L3N5
+dklmKzlRVk96NW1zTTNKR0VyVktXYmcvdlcrM2UvdnJKKzYySGY3CjVzUVZT
+Mnc2bnJ4UlBsREg5aDRCOW1oZ05RUXZCKzkwZkozR1psS3BzTmF4TVJaSUpk
+d0owMktNRXk3QwppRXJnVm9JdmlscGl1cEczM3Jsci9uMXZPR2ZMbm1CdzNY
+V0ZBSndCMTF4K3pvLy8wM24vQ2JkeVlza2gKNEVvaXBhNmdnU0tJMDdxZFZ2
+Wk9OTEFZSENXeTZ4cVFhUU1BcVordk1aWTB3RTdqeVd2RGhjYlhhU1FNClFF
+VkNDQ3kwQiswekZqYXZmZW5oNC9mZGZodnJWbzM2STlzM3YwblhUdXpMODc2
+Wk9xbEpPdGlJSUl6ZQoxY0NyWXpYdllnM3ZLaEUrUk9ndVRmeUl3RTZqYTZY
+QkI0UTZMNmdFR0p1blZLNno4am9PUll5TjN1eWwKaTNyMTYzYS85cXhLQ3hU
+T2JmMUlaN2c5OVQxeFFVMGtqQjlpSTJwV3ZtMktuNDhtVjF0SmJYaUMwNmg1
+CjgyME5EekVTaU1RckdtbWgxZ1ZhdzZta2VHNG96eDJtN01pNzIzN3A0STVk
+Z1B6cXIyTDZ3UVBkeTFxOQo1UVAwaDJnWlFWUU1iVXc5bzhrMW1kcklEZXBZ
+Q1VTbStIeXJyektSYVZTdllKSGd0T0V1R3FyZjFLWW0KbzNPUndGSEFZZVpJ
+Tkp1L3NKTzhGVmhJRk5NRDdmWSs5Zmw1K0pLbzJQZ2hoWGFXT2hxbU1MVjRz
+aFk5ClBWU21FdXBBS2JIcVJ2WWFNOG5ZbEdxcnl1UjNqVzFmNi9oa0Z0MURR
+Uk1wU0dWN1pqWnB2UWxZREFhNgozYVhiMVB2TkVEQkZpcE1WUWlpbVh3M1VO
+ZXhXbVBLOWNvTmg3TnRIL0Y4bjRjR2lTWXpPRFlBZkM4UEMKT0xZWXZUVUMx
+cGgrNnhoem1yaGlnSE9HSnN3NFBYTjJkclp0Z0lvakE4c1FMVlM5RnBoRXFq
+c0NKWjNVCkJBbWdWajQvV21GeFl4OXVvZUNkRW5PSzJKVmFoQXNSaGE1VTJX
+d3ljaEZPbzVGUzl4SWxicWdvbU5CMgoyajV6TVZPQUpDUVZnd21sMjJ1a1dX
+TFNLRk9DbHhGQ1cybkRBcTRrS2RaUTQwcTZHcm5VMEppRGN4SEYKTHBleW9x
+cVZDdFZBczZGTm83SEdKaHNGK0RoVUVrMlNqc0l5Q1lsU3VMNllTRVNSWG1q
+UTE4b2xqc0NzCm1yaEJva0JLQ0FPd0lVRUV6WWVGdG1aekpiR3ltRGVYZ3c0
+Z0NZU2NNT3hoemlGT1VGK21aVndLaVlDUAp1WVNOSjE5RmhCWmpEZlc0d2NZ
+dU9ZaktnSlJDQTVwdWJCUmtUQ0U1SXpXTWFHL0U4UzF4a0hmeForM2oKMUw1
+MzRIYWNoUnRzNEI2OWg1a0gvZ3FSRERRdHJoc2h2aFc1RmQvRGI5dkZ5ZlBl
+aU8zY2pYcElubjZjCnVjZnZRTmVYSVdsSFRCQUlwWGxhcEkxR1BiQ3FhWWdS
+VkZGUmNsTVpEb3VmRXcyTXlRMU50eElGS0NHQwpjNVVHQ0Nwb0FzTXU0WjBm
+Um43Nk04enVlQTFKR1c1YU44ZHUrQnh5NDY4WEFrQkJmWUVMbWtLK1FqajMK
+UWdZZi94eHpldzZRcHFWWDNJREJZN2VTWGY4WjlOaERrRzBxeG1FTlhqQXlI
+NjB2VXBTUmlpTm5uNHQwCmkvUWhTWnFrSmlJMlFsV2piamVWRkRWT1lzUmFY
+TnI3WUlQZXdYZVJYZk03NUs3RDRNZ0REQjY3R1piTwpZZTdBdTdHUC9CS2gv
+d3o2clM5Qk5sTmwxTUQzOFR1V2tHditCM2JlaGZpbmoyQkhEcFA0aytqK3E4
+ajMKdnczOVNDRDc3TWZLTVNXbFoyQU0walhtTmlYRlU5SHhVamdxa0ZvcUFJ
+bFZGOForczRheU5ESTNqY3hNCitkMGpKRC81QzBobkZyM3B5N2cvK1F6dDNo
+UDBaMlpZZmMrL1orN3FhNUYzWEV1NDZ4QzZjUUswVTF5YgpuOEw5eU5YWTNn
+dEovdjRJL3IvL1M3TGxaNUcxbDdEN2I4ZCs4WHBzMzV2aHJJdmhxWWVodFFo
+aFdEN2IKSm9GUW9nVWlsRHBZaE1oYU1DVG1zeGFYTE16eS9QT2drRWMrWEJ0
+SmgwYWdFU2RBTEtLdGFvUzBnM3ZOCmE1Q2hrZDc3RldZSGo2THRPZHJtNlJ5
+Nkh2ZkMwOWhyZHhOMjdvUmhEOXdNbGlTWUtPeTZ1QURSTzc3Qgp6RlAzb21y
+SXpDejY1SU5rUng5RTJ4bThkbGN4R0plTTNhVlJ6eXMyZzZ5bUIxS0hlYU1q
+dVZ5eXlXbVYKRHpCVWJDSmdnVW0zV0V0U01sSS9DMGFhT0N6a21JSVAvV0tT
+WVFpMFNOZFg4V3VyMEo0aExDeUJINEo2ClJJY0VseEMyN2tBUTNNcFRXRElE
+K1FCTThiMlRxQTFMK0prcGhlN0h6RTlkZzVZM0JXRVRRWlVoYU1oeApscVdG
+QUVLNXprMmVINGVnSTdhbVpYYW1lY3hCYjRYQkU0OFJuR0NYZnhDL1pVOEJp
+cXRyK01GYW1VUU8KREZzcDFsK0gzakZzN1FUaVY1RmtGc2dKclI2aHR3eCtT
+Sjh1NndkK0VuL2VHMkU0aE9OUEFDbDRYd3FpCkVRelZXS0hVWXdnZGg5bUtn
+aVhTVjNXRkYzQVN3RUtCZnlVWEZJMWNYS3h1a2YrM0VFbFppaXJQYmIrUApY
+dkZlV20vN2FUaGpIenoxUFlRdXRtTTcrdHBkRU5aby8raTdrTE1PUXBJVmx5
+Y0cyN2RBT0lsNzYwK2gKTzg2SGJCUEp0bDFrRi80RWVXY0cvZVlmd3hNUFFh
+dFRzRTZUQnEyMnNXYkdBVm5KL0FvU05hYnRobURlCkZ3SW9RajZtUkZRUjFi
+UW1LSmFNcmFTOUlnSFNPVHFQSFdiakQvNEYvZ09mSXRtekg5MTNhVUVNdlVG
+LwpCUnNNa1lQL0NIOHdHWTFmQWZHbllMaUJYUFFlOG92ZVh6d3VoMzV2Z0g3
+dEQwbi85MjlnT2xNV1VHUzgKUUUyWHg1Unh4dVJOaWhTSVlpUkpTWVJja01n
+RXBCbWxUS2V6TWQvV2NpcEJFQmFZdWVOcjVJL2NRdGg3CkJZT3pMa01YNXBp
+WjZhRDczd3h6QzlqaHJ6Tjg5dThKbXBMUVJ6b2dsMThOclRQdzk5NU03L2hS
+NlBhZword3J1NlNOa1R6MEFxVU53QmZreE45YkFaa0ZER29XV0puWkpVWnN3
+R1I5TXhHRlM4Y3FKdExVMWtnME4KZHdpVXRhMVJ5Y3BsbTNEZElUeDRDQjY0
+R1ZvSnROcHc5aC9EamlXNDl5Wm12bnNJWnRvUSt0QVdPUDh5Ck9HYzN5ZDFm
+WWU3ZXZ3YWRoZDVxb1Fhejg2VWE2NWg5anN4Ukdva2FhWUJlNVNXb3hTOEJR
+U1cxd2dSaQpobWZVczdEanl0TmtMaTlLbkl3VGthWE42Y3pJejVzWjlBenhE
+dk50OHJ4RkppMmdEZG9tOUR3eU1FUlMKOGg2b0YzU21CWFFnNUJSNUNxdjcv
+SW5NbEk2MW9DSnRGaStVMVhEQlZNalN2QkNBU0JDVE1nOFFwNzlqCjFqY3RH
+VEVSbXBZNWc4SzNsTWVUWXF3RHhheUZ1YlJJc1BoZVVXazNoMWtLb1kyUUls
+a2I4VkZFNTlKbwp4VXRTSTFGdHNNWldiUkxIb0tFRmhXMG9Sc3NYZHBBWUpt
+aDU1UVJ4cURJcnNSbzEwbUZ4RHFBQ3BSQXcKelJFR2FGNGdXdCtLK2hKdEQr
+dkxrQWdXT3JoV3dSMEF3bXdielhzd1hBVS9LQ2FldG9vNGd6SWFOQ245CnYw
+M0dNRXpKSUkzb01wR3BHa203Qk1FSnhJOExGaFZXcXpMVlU2alZndzdBQnV1
+d3RJVHR1eEkyTFVFdwpnaHJwd2h3U3V1UVhIY0RhaTRocWFlTUpzakFIK2N0
+dzRBQ2VOVnk2QlhxbnNDZnVSNDQvaTVnV01VQ1YKUzJpYVJKV2hsbVpVcVBW
+b2NWVFdGcHd2VFNCSVZJVVFKbGxWTEdHclNFV2NGeGcvd0V6cFhYU1Excy85
+CkNucjJHd3NWVm5BQjhCNHZSdnFXajhLUHpkVEJlM0FTL0lEMDRGWGtCejlj
+L09naHJLN1F2K2VydEwvNgoyK2l3SkZ4eGdYVDBPU1YvR01jS3RkcEJkV3lr
+QVkwaUFqUUtsellaRUZtRE1LcURRWmR3N2h0b2ZmSnoKNk5KZStpOGVaL2pD
+czRqMm1Na1V0L3NndVdRTUh6OUNlT1VaZkpvaWlXTm0weXpKMGw3STVoazg4
+eVRyCkw5eUx0RHVFemlLZGJidVFxMzRXZitJRWV1aDNpMENvbGxDeDAxVDZk
+ZEp0ai9Dd3VIYVlKR1U0RENMbApra290VFIxSFZhY1JUbFU3TkNFUGdudlhK
+NUNsdmRnOWg5QS8rUyswVjE5QzhoZlFKR1B3NlZ1d004NmgKZGVQbnNRZS9q
+U1VPc1Q2NmRRNnUvVDNZY3pucHQvNkkrVy9mQUxOYkNXRUZ1ZndEaEovNVQz
+RFZSK0crClA0WFZIcmgyRVEvRWMxZXRkWGpVOFNwU0NUTUlnYUF3S0VHd3FC
+ckV0VDRhcmkydUJkYVNDeFpGaFFHZApXMExPdmhpR0J2ZmNUUHJjUXpnR1Jk
+N0RkNEErNmFDSGJKeENuZURTTnRwWmhGTTVyTHhjM0xPL2hzc2MKVGdLcFFI
+TC9OM0V2UEF6YmQ4Q3VmWkQ3TVNqYmFmS0M2R1R6UlZ5c0tmT1hQdThWWnhk
+dE5tV2F4ZVEwCm5UTlJGaWdPTkNyQmVFOEJhUm1XQytMOXlGN056Y0ttcllU
+MlppeGZKNnlmS3ZtQ0Z1VEd0NkM3RGlMawpyUVdDaFlJOFpadXdZWXAyTjRv
+aHBMTWxHVXFqa3J2VVUreTFmR1lqRVZ0cHRBcUlXU2Y0VUNpUGhjSXgKMWlR
+MHBkUVZ1MFpwdUVjVjZCNWxlUHc1ZWpORzc0emQrUDRHcksvQVJoZlpzdy9k
+dkIzV1RrQnZlU1EwCnZJUGhFRHY2QkFNVEJ2dXVvSi9Pd2JDSHJhOGltNWNZ
+TEoxTDMrZXcvR3lkbDJpRDlkVklVYk5XV0MveApPUm15T0Z2eUFBaGw5WWV5
+TStzZmFwNkxjRUhqa2xjQ29VZnJ6aSt3Y2NsYjZML3Q0NURQMEhuMlZsamEK
+UTNibFB5ZWhoZDUzTzV3OER0cUM0QXVvVjVEN3Y0WjcwejltY05uVnBPc0dk
+LzBGdmJsTnlCVWZJbXpkClRuYjNMZkQ4NDVBbFlNUFN2Vmw5WldXSzF0b1Vm
+b0RoUk9sczdsU3hnSmdVdldGamR6TEtENGJKSW9oTgpxY2NaMEZwQzcvNXpP
+bHZPeHQ3OTd3Z2Z2SWFzLzdQZ1VqWUdnZVNXRzJqZDlJZGpWbVlCd2dCY0Jp
+ZGYKUXY3c1U3aWYrWFdHbDc4ZmQrbDd5SktFZmpEYTMva3IzRmMvQzNtQXBP
+cGMxSW0rdmxya0tvMHluc1d1ClV4aGF3dDg5OTBvQVNISWpJRVhHckVhSVJ1
+U21hVzlOTmhoNUpOdU0zUGlidEk3Y3lzYnJyMkoxNSt1Ugp3VExaSTM5RCtz
+anRCYmVYWk13ZkZMQWNaQlo1OUI2U3ozNk00Zmx2WTNER21SZ1o3cG0vd3oz
+MExjajcKNEdiS3pMU05ydzlXSjJ4TWFhQ3E4RDJNbXp6NnJaWjlkMldqTUlI
+VUxDQVdDcFVPUmJocFZraGJ5cUtvCk5lc0RjWUZTNjV3N09aUGs2Qkhtano1
+TVNPYkJQQzVzUUhzV3lNb21KcTMzR21CSXVvQmJXU0c5ODRhUwo2Z0s1eHpv
+cG9zazRMVit0cExkNk5zZ2FhZjFtTjVrV1ZxY1lYZFFlOFhtaEFlcUgzdkxj
+aXFOcFNXOEwKZnpsWmM0OXJlMXAzUVNKbHo5a1FTUlloZFRqTEM4WWxyU2lG
+RlJjMG90U2FlVlJjVVVFU0xiUWxFU1EwCm1qSzByUGRYNlhCclZJSm91c1dH
+WTNNQ1dlYnpZY2tEMWxzdVI5VWpocWhZUGNTMXladE9JMTRWN1J6NQo0UUEr
+aDFCMjFPWldKRE9RU1EwaVRtNVlHUUlQQ3ZYT0F4UGhlb2pJanpDRnZrOHJq
+R29wKzZKOGw3amMKYjhtN3hXaFhaN2V1eSt6Q3hxZ1ZGcXZYNld2NWoya1Yy
+V1lYaU5SN0JrYlpXeDJ6V0tKMnRoSFBpTTRKClVVVkttL1YzcTZPOHlXUjhI
+cmZPeGNVUk1Vd0M5THNEN1E0TEhuRHpVOFBIMWtpZklSVkNkVkh3VWU1dApT
+bHZyUko5UFhOTFdjWk5FamFwS28vT2pRVmV0SVl4cUVxWUZMazNsWnpyWmh0
+ZXNIbGUvaFlDSkNia24KRDRPWG4xdnVEZ0gwNjNmZWZkZnpyNXg2Z0hhVm9t
+MnNxR21kYkJpVGlCc1BnaWtScGNVRmxTaWVhZm95CksvdTJxcjZDRWRXMnlY
+WVphOXI5dElLSVJmZVZzZ3NuK0pkOCt2RHpnOEZxbFMzdnZxQ3p4OG9zcjlT
+YQpGbXAyTFpNNXdianNIUHZia1VySHdxcUNrVVlpQXhvVnFKaTZLaE9nTVUz
+YmFxcmZ4SmtTT0VSTVJCRnMKN1pHWE5tNEJYZ1lwTVAreDJTMnZoR3grWFVO
+WGJOVFpFVW5lck42MEZJL1RySTY2SnBNSWFZMG01K2JxCnhBS3NnYXJWZzU5
+cGhac21SV2xXdVVlRjBlS2V4MzE2Nmc4ZVBYa0VHUDdLcHo5ZExOT0p6TnNI
+ZDI2NwpwRE5jUGN1Y003Rk1NRi9tNUNKN2M2N1JOZExzMUdwa2tFM3FHWnFh
+QmtXVEU1bmUraktCUWJFWk1ObVgKS0kzcWtNakliVmd3a1RUemYzR1MyMzdy
+TC8vMkJoVi84cFpiYmhWMUl0ejF0OC9kZDYvZjh0ZTBOMjlBCkh6UXJZbTdm
+YUhBS1pVM2ZkSElROGVwWkZKZGJRK1VyTFduMklOZmlkc2Jlb0drcVZBblNo
+bG1vVEhhYwpWczlWTVRSd0ttbS8vTldqcS84VCtrZDlNQUdDNWlHSXdQQy9Q
+bkxpMXJYMjF1K3JEZ1NYQkxKTjVVMWMKMUM5czQwR0pUYW5ReW5UM1ZBTzB1
+UEJhbGE2bVVPM0tESUxWTzBOSGRoMTd4akJPMlZYOUNsS1U2MGlVCkVJSklw
+bmJIaWZWN3ZuVGI5eDVTa1ZEdHFsS1J3dXkvZWZoN3R6M013ditpcy9TaWhS
+T0tlQ054RVppVgo2QnhuV1MzS0UxZ0VUdUpHelltRnRyZ0lzSFNzVVJhamV2
+d1pnVnh0MDhXMFpza291SXBiZTZyZVMrL1IKUE5pYW4zL2dDNCt1L05aMTlK
+LzJJWXhzUXhrblZBZWZ1T3Y0RjQ3Tjc3bGVzdXdrL25neFUrZWk5bmczCmZ2
+Z29Qa2lLdExVMHQ4Sm81UDRpQVZhL1d5UXNqUVFtRGM1USs5NW9vYXM0aGt1
+aTNrRkcvWVlobU9rdwp3TXoyWi83UGN1czN2M3ozQTdmOVdySDYwN2ZNdkhq
+c1dPK2xiVHVQdm1QbmpuWnJjUEpjaHIxT1VHZmkKRWhtMW5NYnBNYTBHN2Vw
+YlhsVEdHNk1tQUZLamtEdTZYNjBOWHliL245Q0NXRWpsL3k0WjhZWVF2S21a
+CjBGbDg0YzlPeXZYLzVJdGYvN0tLbkFwbXRXeXFhMmErNzMvMDZlWGxjL1kv
+L0tPNzl3N2F2bnVCREZmbQppNGg1eG9vZFpkWFd1S2lmVDZQbTZGaExuQnRQ
+VkJ1Q2t3WnVPSzNuSVpteXVhTFpqdTljdlNOVUlYaHYKWWlCcEtubHI0ZnRm
+T1M2Zi85QVh2L0ZIS2p3L2JlZllhYmZOOFliM2RRNWRObnZ0WmY2NWp5NzY1
+UXNZCkRPYXdnTkVxTDFRelZhbVZ6aXJTVkZKZmFSWW9tLzNHTVg3b3REeEVw
+UVUyZ3B6SmZVZ2dGaXo0Z0twQgptb3JQNW9kSCsrNnVQMzN5eEgvNzVXL2Nm
+cU9JYkpqWnE5ODRHZkdjN0tmZTlQYTMvUExyT3UrNE1EbngKN25ueTgvQ0Rs
+RnhhbUVoRVVhM0d6N1hSOWg3dk5MTnhicjYrNjZ6TVBiZ210NCtLb2RvTXlh
+WFlkYWtwCkpDaytiZmRmR3FTSER6MXo0dFpQSGpyOGw2ZE9uVHFzSWdTekgy
+N3ZjTGtIMTRDWnE2L1lmK1V2bnIvMAorbjFaZCtlbVRDOFZzL01SRmtRMUZY
+R0NpSW9nb2xwdVJSRVVQKzQyRFhFUGNpTzFyVkZsZXVUbmRjd2cKWFZJbWFJ
+bzlBR2FlNEJ4OWI1N0FTdGZrOFJXWnVlL3dzZjdSZjN2VDMzejcrZVBQMzFt
+NnVIOXc4cTltCjh6Um1pRk5zekVrMkw3eHY3N2FMTHBwcjc1bHJzNWlwUzdN
+a1UzV2lPQ20yTEltSXl4TFpOanVUbnJGcApQbVc0b1pZSGdwaG9vbUJCTk1t
+S01sMEF4SWx6RWxTVllHSzU5NkllVk1Va1NIQ3VGWjQ4dVJxT3JRMU0KbkJo
+NWJtdmVXM2RqMkQreHVyN3luZVBQUHY3Z3NaZS9DeXhYQzFlMisvL3dtNmVu
+Q1FJTUZUSGpCM3BKClBabzY3U3MwNHNRZjZERXFnZy9oVlUrOGV2MWY0eGkv
+ZXVwY290OEFBQUFBU1VWT1JLNUNZSUk9Cg==
+";
 import { ArrowUpRight, BookOpen, CalendarDays, Check, ChevronRight, Clock3, Command, Flame, Gauge, GraduationCap, LayoutDashboard, Menu, Pencil, Plus, LogOut, Settings, Sparkles, Target, Trash2, Trophy, TrendingUp, Upload, UserRound, X, Zap } from "lucide-react";
 
 type Page = "dashboard" | "study" | "exams" | "scores" | "focus" | "journey" | "settings";
@@ -78,7 +261,7 @@ function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"a
    <span className="toggle-icon toggle-menu"><Menu size={21}/></span><span className="toggle-icon toggle-close"><X size={21}/></span>
   </button>
   <aside className={"sidebar "+(sidebarCollapsed?"collapsed":"")}>
-   <div className="brand"><div className="brand-mark"><span className="brand-icon-fallback" aria-hidden="true">A</span></div><div><strong>AvenroOS</strong><span>your school operating system</span></div></div>
+   <div className="brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div><strong>AvenroOS</strong><span>your school operating system</span></div></div>
    <nav>
     <NavItem icon={<LayoutDashboard size={18}/>} label="Dashboard" active={page==="dashboard"} onClick={()=>navigate("dashboard")}/>
     <NavItem icon={<BookOpen size={18}/>} label="Study" active={page==="study"} onClick={()=>navigate("study")}/>
@@ -287,17 +470,17 @@ function App(){
   return true;
  };
 
- if(loading)return <div className="welcome-shell auth-loading"><div><div className="auth-icon"><span className="brand-icon-fallback" aria-hidden="true">A</span></div><strong>Loading AvenroOS…</strong></div></div>;
+ if(loading)return <div className="welcome-shell auth-loading"><div><div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><strong>Loading AvenroOS…</strong></div></div>;
  if(screen==="app")return <AvenroOSApp mode={mode} onExit={exit} onDeleteAccount={deleteAccount} onSignIn={()=>{setAuthMode("signup");setAuthOpen(true);setScreen("welcome")}}/>;
  return <div className="welcome-shell">
-  <header className="welcome-nav"><div className="welcome-brand"><div className="brand-mark"><span className="brand-icon-fallback" aria-hidden="true">A</span></div><strong>AvenroOS</strong></div><div className="welcome-nav-actions"><button className="nav-auth-link" onClick={enterAnonymous}>Try anonymously</button><button className="nav-auth-btn" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}>Get started <ChevronRight size={16}/></button></div></header>
+  <header className="welcome-nav"><div className="welcome-brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><strong>AvenroOS</strong></div><div className="welcome-nav-actions"><button className="nav-auth-link" onClick={enterAnonymous}>Try anonymously</button><button className="nav-auth-btn" onClick={()=>{setAuthMode("signup");setAuthOpen(true)}}>Get started <ChevronRight size={16}/></button></div></header>
   <Welcome onAnonymous={enterAnonymous} openAuth={(m)=>{setAuthMode(m);setAuthOpen(true)}} onSocial={social} error={error}/>
   {anonymousSetupOpen&&<AnonymousSetupModal close={()=>setAnonymousSetupOpen(false)} continueSetup={finishAnonymousSetup} account={false}/>} {accountSetupOpen&&<AnonymousSetupModal close={()=>setAccountSetupOpen(false)} continueSetup={finishAccountSetup} account={true}/>}
   {authOpen&&<AuthModal mode={authMode} setMode={setAuthMode} close={()=>{setAuthOpen(false);setError("")}} onSocial={social} onEmail={emailAuth} error={error}/>}
  </div>
 }
 
-function AnonymousSetupModal(p:{close:()=>void;continueSetup:(displayName:string,journey:string,classLevel:string)=>void|Promise<void>;account:boolean}){const [name,setName]=useState(""),[journey,setJourney]=useState(""),[classLevel,setClassLevel]=useState("");return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal setup-modal" onMouseDown={e=>e.stopPropagation()}><button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button><div className="auth-icon"><span className="brand-icon-fallback" aria-hidden="true">A</span></div><h1>{p.account?"Welcome to AvenroOS":"Let's set up your AvenroOS"}</h1><p>{p.account?"Your account is ready. Tell us a little about yourself so we can personalize your workspace.":"You're continuing anonymously, so we'll personalize your workspace without creating an account."}</p><label className="field"><span>What should we call you?</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" autoFocus/></label><label className="field"><span>What would you like to name your journey?</span><input value={journey} onChange={e=>setJourney(e.target.value)} placeholder="e.g. 90%+ Mission, Road to Engineering"/></label><label className="field"><span>What class / year are you in?</span><select value={classLevel} onChange={e=>setClassLevel(e.target.value)} aria-label="Class or year"><option value="" disabled>Select your class / year</option><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option><option value="University">University</option></select></label><button className="primary-btn auth-submit reference-continue" onClick={()=>p.continueSetup(name,journey,classLevel)} disabled={!name.trim()||!journey.trim()}>Enter AvenroOS <ChevronRight size={17}/></button><small className="auth-note">{p.account?"You can change these preferences anytime in Settings.":"Anonymous mode stays on this device/session and is not saved to a cloud account."}</small></div></div>}
+function AnonymousSetupModal(p:{close:()=>void;continueSetup:(displayName:string,journey:string,classLevel:string)=>void|Promise<void>;account:boolean}){const [name,setName]=useState(""),[journey,setJourney]=useState(""),[classLevel,setClassLevel]=useState("");return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal setup-modal" onMouseDown={e=>e.stopPropagation()}><button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button><div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><h1>{p.account?"Welcome to AvenroOS":"Let's set up your AvenroOS"}</h1><p>{p.account?"Your account is ready. Tell us a little about yourself so we can personalize your workspace.":"You're continuing anonymously, so we'll personalize your workspace without creating an account."}</p><label className="field"><span>What should we call you?</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" autoFocus/></label><label className="field"><span>What would you like to name your journey?</span><input value={journey} onChange={e=>setJourney(e.target.value)} placeholder="e.g. 90%+ Mission, Road to Engineering"/></label><label className="field"><span>What class / year are you in?</span><select value={classLevel} onChange={e=>setClassLevel(e.target.value)} aria-label="Class or year"><option value="" disabled>Select your class / year</option><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option><option value="University">University</option></select></label><button className="primary-btn auth-submit reference-continue" onClick={()=>p.continueSetup(name,journey,classLevel)} disabled={!name.trim()||!journey.trim()}>Enter AvenroOS <ChevronRight size={17}/></button><small className="auth-note">{p.account?"You can change these preferences anytime in Settings.":"Anonymous mode stays on this device/session and is not saved to a cloud account."}</small></div></div>}
 
 function AuthModal(p:{mode:"signin"|"signup";setMode:(m:"signin"|"signup")=>void;close:()=>void;onSocial:(x:"google"|"notion")=>void;onEmail:(email:string,code?:string)=>Promise<boolean>;error:string}){
  const [email,setEmail]=useState(""),[code,setCode]=useState(""),[codeSent,setCodeSent]=useState(false);
@@ -306,7 +489,7 @@ function AuthModal(p:{mode:"signin"|"signup";setMode:(m:"signin"|"signup")=>void
  const verify=async()=>{if(code.trim().length!==6)return;await p.onEmail(email.trim(),code.trim())};
  return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal auth-reference-modal" onMouseDown={e=>e.stopPropagation()}>
   <button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button>
-  <div className="auth-icon"><span className="brand-icon-fallback" aria-hidden="true">A</span></div>
+  <div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div>
   <h1>Log in or sign up</h1>
   <p>Save your AvenroOS workspace in the cloud and pick up where you left off on any device.</p>
   <button className="social-btn google-auth" onClick={()=>p.onSocial("google")}><span className="google-g">G</span> Continue with Google <ChevronRight size={16}/></button>
@@ -339,8 +522,8 @@ function Welcome(p:{onAnonymous:()=>void;openAuth:(m:"signin"|"signup")=>void;on
  },[]);
  const drift=(speed:number)=>({transform:`translate3d(0,${Math.min(120,scrollY*speed)}px,0)`});
  return <>
-  {intro&&<div className="landing-intro-v2" aria-hidden="true"><div className="landing-intro-mark"><span className="brand-icon-fallback" aria-hidden="true">A</span></div><div className="landing-intro-word">AVENROOS</div><div className="landing-intro-line"/></div>}
-  <main className="welcome-main-v2"><div className="scroll-object-v2" style={{transform:`translate3d(0,${Math.min(180,scrollY*.22)}px,0) rotate(${Math.min(28,scrollY*.035)}deg)`}}><div className="scroll-object-core"><span className="brand-icon-fallback" aria-hidden="true">A</span></div></div>
+  {intro&&<div className="landing-intro-v2" aria-hidden="true"><div className="landing-intro-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div className="landing-intro-word">AVENROOS</div><div className="landing-intro-line"/></div>}
+  <main className="welcome-main-v2"><div className="scroll-object-v2" style={{transform:`translate3d(0,${Math.min(180,scrollY*.22)}px,0) rotate(${Math.min(28,scrollY*.035)}deg)`}}><div className="scroll-object-core"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div></div>
   <section className="landing-hero-v2">
    <div className="landing-hero-copy">
     <div className="landing-eyebrow"><span/> AVENROOS · YOUR SCHOOL OS</div>
@@ -357,7 +540,7 @@ function Welcome(p:{onAnonymous:()=>void;openAuth:(m:"signin"|"signup")=>void;on
     <div className="stage-glow"/>
     <div className="stage-label">LIVE WORKSPACE <span>●</span></div>
     <div className="stage-window">
-      <div className="stage-top"><div className="stage-brand"><div className="stage-mark"><span className="brand-icon-fallback" aria-hidden="true">A</span></div> AVENROOS</div><span>MONDAY · 08:42</span></div>
+      <div className="stage-top"><div className="stage-brand"><div className="stage-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div> AVENROOS</div><span>MONDAY · 08:42</span></div>
       <div className="stage-body">
        <span className="stage-kicker">YOUR NEXT MOVE</span>
        <h2>Finish what<br/><b>matters today.</b></h2>
