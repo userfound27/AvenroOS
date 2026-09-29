@@ -1,6 +1,6 @@
 {
-  "name":"StudentOS — Student Productivity & Study Planner",
-  "short_name":"StudentOS",
+  "name":"AvenroOS — Student Productivity & Study Planner",
+  "short_name":"AvenroOS",
   "start_url":"/",
   "scope":"/",
   "display":"standalone",
@@ -8,6 +8,6 @@
   "theme_color":"#090b12",
   "description":"A personal operating system for students.",
   "icons":[
-    {"src":"/studentos-favicon.png","sizes":"any","type":"image/png","purpose":"any maskable"}
+    {"src":"/avenroos-favicon.png","sizes":"any","type":"image/png","purpose":"any maskable"}
   ]
 }
