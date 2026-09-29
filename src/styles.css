@@ -212,7 +212,7 @@
 .sidebar.collapsed .nav-item{justify-content:center;padding-left:0;padding-right:0}
 .sidebar.collapsed~.main{margin-left:72px;width:calc(100% - 72px)}
 @media(max-width:760px){.sidebar.collapsed{width:250px}.sidebar.collapsed~.main{margin-left:0;width:100%}}
-/* STUDENTOS LANDING V2 */ 
+/* AVENROOS LANDING V2 */ 
 .welcome-shell{background:#080a0d;background-image:none;color:#f4f4f1}
 .welcome-nav{height:82px;padding:0 52px;border-bottom:1px solid rgba(255,255,255,.075);background:rgba(8,10,13,.72);backdrop-filter:blur(18px);position:relative;z-index:10}
 .welcome-brand{font-size:17px;letter-spacing:-.035em}.welcome-brand .brand-mark{width:38px;height:38px;border-radius:11px;background:#ff673d;color:#fff;box-shadow:0 8px 28px rgba(255,103,61,.18)}
@@ -220,6 +220,7 @@
 .welcome-main-v2{max-width:1320px;margin:0 auto;padding:0 38px}.landing-hero-v2{min-height:760px;display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:center;position:relative;border-bottom:1px solid rgba(255,255,255,.075)}
 .landing-hero-copy{padding:70px 0;position:relative;z-index:2}.landing-eyebrow,.manifesto-index,.module-heading>span,.landing-close-v2>span{color:#ff8c6d;font-size:10px;font-weight:800;letter-spacing:.16em}.landing-eyebrow span{width:7px;height:7px;border-radius:50%;display:inline-block;background:#ff704a;margin-right:9px;vertical-align:1px}
 .landing-hero-copy h1{margin:27px 0 25px;max-width:690px;font-size:clamp(58px,6.8vw,92px);line-height:.91;letter-spacing:-.075em;font-weight:760}.landing-hero-copy h1 em,.landing-manifesto-v2 h2 em,.module-heading h2 em,.landing-close-v2 h2 em{color:#ff704a;font-style:normal}
+.landing-punchline{display:inline-block;margin-top:-6px;margin-bottom:17px;color:#f2f4f5;font-size:13px;font-weight:800;letter-spacing:.01em}
 .landing-hero-copy p{max-width:590px;color:#8e969f;font-size:16px;line-height:1.7}.landing-actions-v2{display:flex;align-items:center;gap:22px;margin-top:32px}.landing-primary-v2{min-height:50px;border:0;border-radius:11px;padding:0 18px;display:inline-flex;align-items:center;gap:10px;background:#ff704a;color:#0a0c0f;font:inherit;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 14px 32px rgba(255,112,74,.13);transition:transform .2s ease,box-shadow .2s ease}.landing-primary-v2:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(255,112,74,.2)}
 .landing-text-v2{border:0;background:transparent;color:#d7dbe0;font:inherit;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:10px 0}.landing-text-v2:hover{color:#ff9a7e}
 .landing-proof-v2{display:flex;align-items:center;gap:11px;margin-top:24px;color:#59616b;font-size:8px;letter-spacing:.12em}.landing-proof-v2 i{width:3px;height:3px;border-radius:50%;background:#414852}
