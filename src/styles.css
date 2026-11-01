@@ -422,3 +422,38 @@ input:focus,.setting-input:focus,.field input:focus{border-color:#ff704c;outline
   .content{padding-left:17px;padding-right:17px}
   .hero-card h2{font-size:32px}
 }
+
+
+/* Assessment-based score tracker */
+.score-trend-panel{padding:20px 22px}
+.score-trend-change{font-size:13px;font-weight:800;padding:6px 9px;border-radius:8px;white-space:nowrap}
+.score-trend-change span{font-size:9px;font-weight:500;opacity:.7}
+.score-trend-change.positive{color:#69d7a6;background:#14271f}
+.score-trend-change.negative{color:#ff8a7b;background:#2b191a}
+.score-trend-chart{display:block;width:100%;height:145px;margin-top:15px;overflow:visible}
+.score-chart-axis{stroke:#3a414e;stroke-width:1}
+.score-chart-grid{stroke:#252b36;stroke-width:1;stroke-dasharray:3 4}
+.score-chart-line{fill:none;stroke:#ff764c;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.score-chart-point{fill:#ff9a78;stroke:#171b23;stroke-width:1.5}
+.score-trend-labels{display:flex;justify-content:space-between;gap:12px;color:#727b8d;font-size:10px}
+.score-trend-labels span{max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score-trend-hint,.empty-state{color:#747d90;font-size:11px;line-height:1.5;margin:12px 0 0}
+.score-assessments{gap:10px}
+.assessment-card{padding:0;overflow:hidden}
+.assessment-card-trigger{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:18px;padding:17px 19px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.assessment-card-trigger:hover{background:#141923}
+.assessment-card-copy strong{display:block;color:#e8ebf3;font-size:14px}
+.assessment-card-copy small{display:block;color:#737c8f;font-size:10px;margin-top:5px}
+.assessment-card-percent{font-size:22px;font-weight:800;color:#ff9a78}
+.assessment-card-open{display:flex;align-items:center;gap:4px;color:#9ba3b4;font-size:10px;white-space:nowrap}
+.assessment-card-open svg{transition:transform .15s}
+.assessment-card-trigger[aria-expanded="true"] .assessment-card-open svg{transform:rotate(90deg)}
+.assessment-subjects{padding:0 19px 14px;border-top:1px solid #202631}
+.assessment-subject-head,.assessment-subject-row,.assessment-total{display:grid;grid-template-columns:minmax(0,1fr) .7fr .8fr 30px;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid #1c222c;font-size:11px}
+.assessment-subject-head{color:#697284;font-size:9px;text-transform:uppercase}
+.assessment-subject-row{color:#929bad}
+.assessment-subject-row strong,.assessment-total strong{color:#dce0e9}
+.assessment-subject-row .icon-btn{justify-self:end}
+.assessment-total{border:0;color:#ffb199;padding-top:14px;font-weight:800}
+.assessment-total strong:last-of-type{color:#ff9a78}
+@media(max-width:600px){.assessment-card-trigger{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:15px}.assessment-card-open{grid-column:1/-1;justify-self:start}.assessment-subjects{padding:0 12px 12px}.assessment-subject-head,.assessment-subject-row,.assessment-total{grid-template-columns:minmax(0,1fr) .65fr .8fr 25px;gap:6px;font-size:10px}.score-trend-panel{padding:16px}}
