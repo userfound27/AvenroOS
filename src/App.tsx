@@ -177,7 +177,7 @@ function Scores(p:{scores:Score[];setScores:Dispatch<SetStateAction<Score[]>>;on
  const grouped=safeScores.reduce((acc,s)=>{const name=s.test;if(!acc[name])acc[name]={test:name,scores:[],date:s.date};acc[name].scores.push(s);if(s.date>acc[name].date)acc[name].date=s.date;return acc;},{} as Record<string,{test:string;scores:typeof safeScores;date:string}>);
  const assessments=Object.values(grouped).map(g=>{const total=g.scores.reduce((sum,s)=>sum+s.obtained,0),max=g.scores.reduce((sum,s)=>sum+s.max,0);return {...g,total,max,percent:max?Math.round(total/max*10000)/100:0};}).sort((a,b)=>a.date.localeCompare(b.date));
  const total=safeScores.reduce((sum,s)=>sum+s.obtained,0),max=safeScores.reduce((sum,s)=>sum+s.max,0),overall=max?Math.round(total/max*10000)/100:0;
- const points=assessments.map((a,i)=>({x:assessments.length===1?160:12+i*(296/(assessments.length-1)),y:68-a.percent*.52,percent:a.percent}));
+ const points=assessments.map((a,i)=>({x:assessments.length===1?160:12+i*(296/(assessments.length-1)),y:68-Math.min(100,Math.max(0,a.percent))*.52,percent:a.percent}));
  const line=points.map(point=>point.x+","+point.y).join(" ");
  const change=assessments.length>1?assessments[assessments.length-1].percent-assessments[assessments.length-2].percent:null;
  return <div className="stack">
