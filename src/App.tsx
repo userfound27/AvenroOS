@@ -426,9 +426,47 @@ function SpaceWidget(p:{type:string;index:number;data:string[];save:(value:strin
  return <section className="panel space-widget"><div className="widget-heading"><span className="widget-icon">{p.type==="links"?<ArrowUpRight/>:<Check/>}</span><div><h3>{title}</h3><p>{p.type==="links"?"Save a useful URL":p.type==="files"?"Keep resource names or references":"Add items and check them off"}</p></div></div><form className="widget-add-form" onSubmit={e=>{e.preventDefault();add()}}><input value={draft} onChange={e=>setDraft(e.target.value)} placeholder={p.type==="links"?"Paste a URL…":p.type==="files"?"Add a resource name…":"Add an item…"}/><button className="icon-btn" type="submit" disabled={!draft.trim()} aria-label="Add item"><Plus/></button></form><div className="widget-list">{(p.data||[]).map((item,i)=>{const checked=item.startsWith("[x] "),label=checked?item.slice(4):item;return <div key={i}>{p.type==="links"&&/^https?:\/\//i.test(item)?<a href={item} target="_blank" rel="noreferrer">{item}</a>:<span className={checked?"widget-item-checked":""}>{label}</span>}{(p.type==="checklist"||p.type==="tasks")&&<button className="icon-btn" onClick={()=>p.save(p.data.map((v,j)=>j===i?(checked?label:"[x] "+label):v))} aria-label={checked?"Mark incomplete":"Mark complete"}><Check size={14}/></button>}<button className="icon-btn" onClick={()=>p.save(p.data.filter((_,j)=>j!==i))} aria-label="Remove item"><Trash2 size={14}/></button></div>})}</div></section>;
 }
 
-const widgetCatalog=[
- {id:"progress",name:"Progress bar",description:"Track a percentage or milestone."},{id:"checklist",name:"Checklist",description:"Tick off small steps."},{id:"tasks",name:"Task list",description:"Keep actions in one place."},{id:"notes",name:"Notes",description:"A flexible writing area."},{id:"goal",name:"Goal tracker",description:"See how close you are to a target."},{id:"habit",name:"Habit tracker",description:"Mark a daily habit complete."},{id:"calendar",name:"Date & deadline",description:"Keep an important date visible."},{id:"timer",name:"Focus timer",description:"Run a focused work session."},{id:"counter",name:"Counter",description:"Track a simple number."},{id:"links",name:"Useful links",description:"Save URLs you need."},{id:"text",name:"Text block",description:"Add a description or instructions."},{id:"countdown",name:"Countdown",description:"See how many days remain until a date."},{id:"files",name:"Resource list",description:"Keep a list of file names or references."}
+const widgetGroups=[
+ {id:"tasks",name:"Tasks & to-do",widgets:[
+ {id:"tasks",name:"Task list",description:"Capture actions and mark them complete."},
+ {id:"checklist",name:"Checklist",description:"Tick off steps in a simple list."},
+ {id:"priority",name:"Priority matrix",description:"Sort tasks by importance and urgency."},
+ {id:"quicktask",name:"Quick task capture",description:"A fast inbox for things to do."}
+ ]},
+ {id:"calendar",name:"Calendar & time management",widgets:[
+ {id:"calendar",name:"Calendar & deadlines",description:"Choose and keep an important date."},
+ {id:"countdown",name:"Countdown",description:"See how many days remain until a date."},
+ {id:"schedule",name:"Daily schedule",description:"Plan events and time slots."},
+ {id:"timeblocks",name:"Time blocking",description:"Plan what you'll work on and when."},
+ {id:"reminders",name:"Reminder list",description:"Keep upcoming reminders in one place."}
+ ]},
+ {id:"focus",name:"Focus & time tracking",widgets:[
+ {id:"timer",name:"Focus timer",description:"Run and pause a focused session."},
+ {id:"pomodoro",name:"Pomodoro timer",description:"Work and break in repeating intervals."},
+ {id:"stopwatch",name:"Stopwatch",description:"Measure elapsed time."},
+ {id:"timelog",name:"Time log",description:"Record how long activities take."}
+ ]},
+ {id:"notes",name:"Notes & reference",widgets:[
+ {id:"notes",name:"Notes",description:"Write and save longer notes."},
+ {id:"quicknote",name:"Quick note",description:"Capture a short thought instantly."},
+ {id:"links",name:"Bookmarks & links",description:"Save and open useful URLs."},
+ {id:"files",name:"Resource list",description:"Keep names of files and references."},
+ {id:"reading",name:"Reading list",description:"Track things you want to read."},
+ {id:"text",name:"Text block",description:"Add instructions or reference text."}
+ ]},
+ {id:"ambient",name:"Ambient & utility",widgets:[
+ {id:"clock",name:"Live clock",description:"Keep the current time visible."},
+ {id:"calculator",name:"Calculator",description:"Do quick arithmetic inside your Space."},
+ {id:"ambient",name:"Ambient focus",description:"A calm visual focus panel with optional sound."},
+ {id:"progress",name:"Progress bar",description:"Track a percentage or milestone."},
+ {id:"goal",name:"Goal tracker",description:"See how close you are to a target."},
+ {id:"habit",name:"Habit tracker",description:"Mark a daily habit complete."},
+ {id:"counter",name:"Counter",description:"Track a simple running number."},
+ {id:"chart",name:"Progress chart",description:"Visualise a simple percentage."}
+ ]}
 ];
+const widgetCatalog=widgetGroups.flatMap(group=>group.widgets);
+
 const spacePresets=[
  {id:"study",name:"Study",icon:"book",purpose:"Organise learning, assignments and exam preparation.",widgets:["progress","checklist","tasks","notes","calendar","timer"]},
  {id:"workout",name:"Workout",icon:"activity",purpose:"Plan routines and keep track of training sessions.",widgets:["progress","habit","checklist","notes","calendar","countdown"]},
