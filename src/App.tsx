@@ -5,7 +5,7 @@ const AVENROOS_ICON = "/avenroos-logo.webp?v=6";
 import { ArrowUpRight, BookOpen, CalendarDays, Check, ChevronRight, Clock3, Command, Flame, Gauge, GraduationCap, LayoutDashboard, Menu, Pencil, Plus, LogOut, Settings, Sparkles, Target, Trash2, Trophy, TrendingUp, Upload, UserRound, X, Zap } from "lucide-react";
 
 type Page = "dashboard" | "spaces" | "space-detail" | "study" | "exams" | "scores" | "focus" | "journey" | "settings";
-type Space = {id:string;name:string;icon:string;description:string;kind:string;items:string[];enabled:boolean;template?:string;widgets?:string[];widgetData?:Record<string,string[]>};
+type Space = {id:string;name:string;icon:string;description:string;purpose?:string;kind:string;items:string[];enabled:boolean;template?:string;widgets?:string[];widgetData?:Record<string,string[]>};
 type Task = { id:number; title:string; subject:string; date:string; done:boolean; minutes:number };
 type ExamLesson = { id:number; title:string; done:boolean };
 type Exam = { id:number; name:string; subject:string; date:string; portion:string; progress:number; lessons:ExamLesson[]; revisionRounds:number; practiceTests:number; confidence:number; weakAreas:string };
@@ -27,7 +27,7 @@ const seedScores:Score[]=[
  {id:3,subject:"English",test:"Periodic Test",obtained:37,max:40,date:"2026-09-10"}
 ];
 
-type SavedData = { tasks:Task[]; exams:Exam[]; scores:Score[]; spaces:Space[]; journey:string; classLevel:string; displayName:string; avatarUrl:string };
+type SavedData = { tasks:Task[]; exams:Exam[]; scores:Score[]; spaces:Space[]; spacesVersion?:number; journey:string; classLevel:string; displayName:string; avatarUrl:string };
 declare global { interface Window { __studentosData?: SavedData; __studentosEmail?: string; __studentosUserId?: string; __studentosUpdate?:()=>Promise<void> } }
 
 
@@ -38,7 +38,7 @@ function normalizeExam(exam:Partial<Exam>):Exam{
  return {id:Number(exam.id)||Date.now(),name:String(exam.name||"New exam"),subject:String(exam.subject||"Other"),date:String(exam.date||today),portion:String(exam.portion||lessons.map(l=>l.title).join(", ")),progress,lessons,revisionRounds:Math.max(0,Number(exam.revisionRounds)||0),practiceTests:Math.max(0,Number(exam.practiceTests)||0),confidence:Math.min(5,Math.max(0,Number(exam.confidence)||0)),weakAreas:String(exam.weakAreas||"")};
 }
 function blankData():SavedData{
- return {tasks:seedTasks.map(x=>({...x})),exams:seedExams.map(x=>normalizeExam(x)),scores:seedScores.map(x=>({...x})),spaces:[],journey:"Make meaningful progress",classLevel:"",displayName:"",avatarUrl:""};
+ return {tasks:seedTasks.map(x=>({...x})),exams:seedExams.map(x=>normalizeExam(x)),scores:seedScores.map(x=>({...x})),spaces:[],spacesVersion:1,journey:"Make meaningful progress",classLevel:"",displayName:"",avatarUrl:""};
 }
 
 async function loadCloudData(userId:string):Promise<SavedData>{
@@ -46,8 +46,11 @@ async function loadCloudData(userId:string):Promise<SavedData>{
  const {data,error}=await supabase.from("studentos_profiles").select("data").eq("id",userId).maybeSingle();
  if(error){console.error(error);return blankData();}
  if(!data?.data)return blankData();
- const merged={...blankData(),...(data.data as Partial<SavedData>)};
- return {...merged,exams:(merged.exams||[]).map(e=>normalizeExam(e)),spaces:Array.isArray(merged.spaces)?merged.spaces:[]};
+ const stored=data.data as Partial<SavedData>;
+ const merged={...blankData(),...stored};
+ const legacyStudy:Space={id:"legacy-study",name:"Study",icon:"book",description:"Your learning workspace, with study sessions, exams, scores and focus tools.",purpose:"Organise learning, assignments and exam preparation.",kind:"template",template:"study",items:[],widgets:["progress","checklist","tasks","notes","calendar","timer"],widgetData:{},enabled:true};
+ const migratedSpaces=Array.isArray(stored.spaces)?stored.spaces:(stored.spacesVersion===1?[]:[legacyStudy]);
+ return {...merged,exams:(merged.exams||[]).map(e=>normalizeExam(e)),spaces:migratedSpaces,spacesVersion:1};
 }
 
 async function saveCloudData(userId:string,data:SavedData){
@@ -57,14 +60,14 @@ async function saveCloudData(userId:string,data:SavedData){
 }
 
 function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"account";onExit:()=>Promise<void>|void;onSignIn:()=>void;onDeleteAccount:()=>Promise<string>}){
- const [page,setPage]=useState<Page>(()=>{const saved=sessionStorage.getItem("studentos-page");return saved&&["dashboard","spaces","space-detail","study","exams","scores","focus","journey","settings"].includes(saved)?saved as Page:(window.__studentosData?.spaces?.length?"dashboard":"spaces")}),[sidebarCollapsed,setSidebarCollapsed]=useState(true),[selectedExamId,setSelectedExamId]=useState<number|null>(null),[selectedSpaceId,setSelectedSpaceId]=useState(""),[spaceModal,setSpaceModal]=useState(false);
+ const [page,setPage]=useState<Page>(()=>{const saved=sessionStorage.getItem("studentos-page");if(!(window.__studentosData?.spaces?.length))return "spaces";return saved&&["dashboard","spaces","space-detail","study","exams","scores","focus","journey","settings"].includes(saved)?saved as Page:"dashboard"}),[sidebarCollapsed,setSidebarCollapsed]=useState(true),[selectedExamId,setSelectedExamId]=useState<number|null>(null),[selectedSpaceId,setSelectedSpaceId]=useState(""),[spaceModal,setSpaceModal]=useState(false);
  const initial=window.__studentosData||blankData();
  const [tasks,setTasks]=useState(initial.tasks),[exams,setExams]=useState(initial.exams),[scores,setScores]=useState(initial.scores),[spaces,setSpaces]=useState<Space[]>(initial.spaces||[]);
  const [journey,setJourney]=useState(initial.journey),[classLevel,setClassLevel]=useState(initial.classLevel||""),[displayName,setDisplayName]=useState(initial.displayName||"Student"),[avatarUrl,setAvatarUrl]=useState(initial.avatarUrl||""),[showTask,setShowTask]=useState(false),[editingTask,setEditingTask]=useState<Task|null>(null),[showScore,setShowScore]=useState(false),[showExam,setShowExam]=useState(false);
  const [focusSeconds,setFocusSeconds]=useState(1500),[focusMinutes,setFocusMinutes]=useState(25),[focusRunning,setFocusRunning]=useState(false),[focusTaskTitle,setFocusTaskTitle]=useState(""),[accountError,setAccountError]=useState("");
  useEffect(()=>{
   if(mode!=="account"||!window.__studentosUserId)return;
-  const payload={tasks,exams,scores,spaces,journey,classLevel,displayName,avatarUrl};
+  const payload={tasks,exams,scores,spaces,spacesVersion:1,journey,classLevel,displayName,avatarUrl};
   const timer=window.setTimeout(()=>{void saveCloudData(window.__studentosUserId!,payload)},250);
   return()=>window.clearTimeout(timer);
  },[mode,tasks,exams,scores,spaces,journey,classLevel,displayName,avatarUrl]);
@@ -73,7 +76,7 @@ function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"a
  useEffect(()=>{sessionStorage.setItem("studentos-page",page)},[page]);
  const completed=tasks.filter(t=>t.done).length;
  const scoreAverage=scores.length?Math.round(scores.reduce((a,s)=>a+s.obtained/s.max,0)/scores.length*100):0;
- const navigate=(p:Page)=>{setPage(p);setSidebarCollapsed(true)}; const openSpace=(id:string)=>{const space=spaces.find(x=>x.id===id);if(space?.template==="study"||id==="study"){setSelectedSpaceId(id);navigate("study");return;}setSelectedSpaceId(id);navigate("space-detail")}; const profileAction=()=>{navigate("settings")};
+ const navigate=(p:Page)=>{setPage(p);setSidebarCollapsed(true)}; const openSpace=(id:string)=>{setSelectedSpaceId(id);navigate("space-detail")}; const profileAction=()=>{navigate("settings")};
  const saveProfile=async(name:string,file?:File)=>{if(mode!=="account"||!supabase||!window.__studentosUserId)return "Sign in to update your profile.";const nextName=name.trim().slice(0,60);if(!nextName)return "Enter a display name.";let nextAvatar=avatarUrl;if(file){const allowed=["image/jpeg","image/png","image/webp","image/gif"];if(!allowed.includes(file.type))return "Choose a JPG, PNG, WebP, or GIF image.";if(file.size>5*1024*1024)return "Choose an image smaller than 5 MB.";const path=window.__studentosUserId+"/avatar";const bucket=supabase.storage.from("studentos-avatars");const {error:uploadError}=await bucket.upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});if(uploadError)return "Image upload failed: "+uploadError.message;const {data:urlData}=bucket.getPublicUrl(path);nextAvatar=urlData.publicUrl+"?v="+Date.now();}const {error:authError}=await supabase.auth.updateUser({data:{display_name:nextName,avatar_url:nextAvatar}});if(authError)return "Profile save failed: "+authError.message;setDisplayName(nextName);setAvatarUrl(nextAvatar);return "";};
  return <div className="app-shell">
   <button className={"sidebar-toggle "+(sidebarCollapsed?"is-closed":"is-open")} aria-label={sidebarCollapsed?"Open navigation":"Close navigation"} aria-expanded={!sidebarCollapsed} onClick={()=>setSidebarCollapsed(v=>!v)}>
@@ -285,8 +288,8 @@ function App(){
  },[]);
 
  const enterAnonymous=()=>{setAnonymousSetupOpen(true)};
- const finishAccountSetup=async(displayName:string,journey:string,classLevel:string)=>{const data={...(window.__studentosData||blankData()),displayName:displayName.trim()||"Student",journey:journey.trim()||"Make meaningful progress",classLevel:classLevel.trim()};window.__studentosData=data;setAccountSetupOpen(false);if(window.__studentosUserId)await saveCloudData(window.__studentosUserId,data)};
- const finishAnonymousSetup=(displayName:string,journey:string,classLevel:string)=>{const data=blankData();data.displayName=displayName.trim()||"Student";data.journey=journey.trim()||"Make meaningful progress";data.classLevel=classLevel.trim();window.__studentosData=data;window.__studentosEmail="";window.__studentosUserId="";setAnonymousSetupOpen(false);setMode("anonymous");setScreen("app")};
+ const finishAccountSetup=async(displayName:string,_journey:string,_classLevel:string)=>{const data={...(window.__studentosData||blankData()),displayName:displayName.trim()||"User",spacesVersion:1};window.__studentosData=data;setAccountSetupOpen(false);sessionStorage.removeItem("studentos-page");if(window.__studentosUserId)await saveCloudData(window.__studentosUserId,data)};
+ const finishAnonymousSetup=(displayName:string,_journey:string,_classLevel:string)=>{const data=blankData();data.displayName=displayName.trim()||"User";window.__studentosData=data;window.__studentosEmail="";window.__studentosUserId="";sessionStorage.removeItem("studentos-page");setAnonymousSetupOpen(false);setMode("anonymous");setScreen("app")};
  const exit=async()=>{if(supabase&&mode==="account")await supabase.auth.signOut();window.__studentosData=undefined;window.__studentosEmail="";window.__studentosUserId="";setMode("anonymous");setScreen("welcome")};
  const deleteAccount=async()=>{if(!supabase)return "Supabase is not connected.";const {error:deleteError}=await supabase.functions.invoke("delete-studentos-account",{method:"POST"});if(deleteError)return deleteError.message||"Account deletion failed.";await exit();return "";};
 
@@ -324,8 +327,7 @@ function App(){
  </div>
 }
 
-function AnonymousSetupModal(p:{close:()=>void;continueSetup:(displayName:string,journey:string,classLevel:string)=>void|Promise<void>;account:boolean}){const [name,setName]=useState(""),[journey,setJourney]=useState(""),[classLevel,setClassLevel]=useState("");return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal setup-modal" onMouseDown={e=>e.stopPropagation()}><button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button><div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><h1>{p.account?"Welcome to AvenroOS":"Let's set up your AvenroOS"}</h1><p>{p.account?"Your account is ready. Tell us a little about yourself so we can personalize your workspace.":"You're continuing anonymously, so we'll personalize your workspace without creating an account."}</p><label className="field"><span>What should we call you?</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" autoFocus/></label><label className="field"><span>What would you like to name your journey?</span><input value={journey} onChange={e=>setJourney(e.target.value)} placeholder="e.g. 90%+ Mission, Road to Engineering"/></label><label className="field"><span>What class / year are you in?</span><select value={classLevel} onChange={e=>setClassLevel(e.target.value)} aria-label="Class or year"><option value="" disabled>Select your class / year</option><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option><option value="Class 10">Class 10</option><option value="Class 11">Class 11</option><option value="Class 12">Class 12</option><option value="University">University</option></select></label><button className="primary-btn auth-submit reference-continue" onClick={()=>p.continueSetup(name,journey,classLevel)} disabled={!name.trim()||!journey.trim()}>Enter AvenroOS <ChevronRight size={17}/></button><small className="auth-note">{p.account?"You can change these preferences anytime in Settings.":"Anonymous mode stays on this device/session and is not saved to a cloud account."}</small></div></div>}
-
+function AnonymousSetupModal(p:{close:()=>void;continueSetup:(displayName:string,journey:string,classLevel:string)=>void|Promise<void>;account:boolean}){const [name,setName]=useState("");return <div className="modal-backdrop auth-backdrop" onMouseDown={p.close}><div className="auth-card auth-modal setup-modal" onMouseDown={e=>e.stopPropagation()}><button className="auth-close icon-btn" onClick={p.close} aria-label="Close"><X size={18}/></button><div className="auth-icon"><img src={AVENROOS_ICON} alt="" aria-hidden="true"/></div><span className="eyebrow">A NEW WORKSPACE STARTS HERE</span><h1>{p.account?"Welcome to AvenroOS":"Explore AvenroOS"}</h1><p>Give your profile a name. Next, you'll create your first Space and choose the tools that belong in it.</p><label className="field"><span>What should we call you? (optional)</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" autoFocus/></label><div className="modal-actions"><button className="ghost-btn" onClick={p.close}>Not now</button><button className="primary-btn" onClick={()=>void p.continueSetup(name,"","")}>Create my first Space <ChevronRight size={16}/></button></div></div></div>}
 function AuthModal(p:{mode:"signin"|"signup";setMode:(m:"signin"|"signup")=>void;close:()=>void;onSocial:(x:"google"|"notion")=>void;onEmail:(email:string,code?:string)=>Promise<boolean>;error:string}){
  const [email,setEmail]=useState(""),[code,setCode]=useState(""),[codeSent,setCodeSent]=useState(false);
  const errorIsSent=p.error==="CODE_SENT";
