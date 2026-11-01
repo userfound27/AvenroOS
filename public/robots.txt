@@ -13,4 +13,4 @@ Allow: /
 User-agent: GPTBot
 Allow: /
 
-Sitemap: https://studentosv1.vercel.app/sitemap.xml
+Sitemap: https://avenroos.vercel.app/sitemap.xml
