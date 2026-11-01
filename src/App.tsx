@@ -139,13 +139,13 @@ function Dashboard(p:{spaces:Space[];tasks:Task[];exams:Exam[];scores:Score[];na
  const completedAcross=enabled.reduce((n,space)=>n+Object.values(space.widgetData||{}).flat().filter(x=>x.startsWith("[x] ")).length,doneTasks);
  const trackedAcross=enabled.reduce((n,space)=>n+Object.values(space.widgetData||{}).flat().filter(x=>!/^\\d+$/.test(x)&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(x)).length,p.tasks.length);
  return <div className="stack dashboard-stack home-overview">
-  <section className="home-welcome"><div><span className="eyebrow">YOUR LIFE, IN ONE VIEW</span><h2>Your overview.</h2><p>A live snapshot of what’s happening across all your Spaces.</p></div><button className="primary-btn" onClick={p.onCreateSpace}><Plus size={16}/> Create a Space</button></section>
+  <section className="home-welcome"><div><span className="eyebrow">YOUR LIFE, IN ONE VIEW</span><h2>Your overview.</h2><p>A live snapshot of what’s happening across all your Spaces.</p></div></section>
   <section className="home-metrics">
    <article className="home-metric"><span>YOUR SPACES</span><strong>{enabled.length}</strong><small>Active workspaces</small></article>
    <article className="home-metric"><span>TASKS COMPLETED</span><strong>{completedAcross}</strong><small>{trackedAcross} tracked items across Spaces</small></article>
    <article className="home-metric"><span>HABIT CHECK-INS</span><strong>{habits}</strong><small>Completed habit days</small></article>
      </section>
-  <div className="home-section-heading"><div><h3>Spaces</h3><p>Everything you organise, all in one place.</p></div><button className="primary-btn" onClick={p.onCreateSpace}><Plus size={15}/> Create a Space</button></div>
+  <div className="home-section-heading"><div><h3>Spaces</h3><p>Everything you organise, all in one place.</p></div>{enabled.length>0&&<button className="primary-btn" onClick={p.onCreateSpace}><Plus size={15}/> Create a Space</button>}</div>
   {enabled.length?<section className="home-space-grid">{enabled.map(space=><button className="home-space-card" key={space.id} onClick={()=>p.openSpace(space.id)}><span className="home-space-icon">{spaceIconEmoji(space.icon)}</span><span className="home-space-name">{space.name}</span><span className="home-space-purpose">{space.purpose||space.description||"Your personal workspace"}</span><span className="home-space-open">Open Space <ChevronRight size={14}/></span></button>)}</section>:<section className="home-empty-spaces"><div className="home-empty-symbol">＋</div><h3>Start by creating your first Space</h3><p>Build a workspace for anything you want to organise. Add templates, widgets and your own structure.</p><button className="primary-btn" onClick={p.onCreateSpace}>Create your first Space</button></section>}
   <div className="home-lower-grid">
    <section className="panel home-activity-panel"><div className="panel-head"><div><h3>Across your Spaces</h3><p>A combined activity log from all your workspaces.</p></div><span className="count-pill">{activity.length} entries</span></div>
