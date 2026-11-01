@@ -431,7 +431,7 @@ const widgetCatalog=[
 ];
 const spacePresets=[
  {id:"study",name:"Study",icon:"book",purpose:"Organise learning, assignments and exam preparation.",widgets:["progress","checklist","tasks","notes","calendar","timer"]},
- {id:"workout",name:"Workout",icon:"activity",purpose:"Plan routines and keep track of training sessions.",widgets:["progress","habit","checklist","notes","calendar","chart"]},
+ {id:"workout",name:"Workout",icon:"activity",purpose:"Plan routines and keep track of training sessions.",widgets:["progress","habit","checklist","notes","calendar","countdown"]},
  {id:"projects",name:"Projects",icon:"layers",purpose:"Plan projects, manage next steps and review progress.",widgets:["progress","tasks","checklist","notes","calendar","links"]},
  {id:"knowledge",name:"Knowledge",icon:"book",purpose:"Collect useful notes, ideas and reference material.",widgets:["notes","links","text","checklist","files"]}
 ];
