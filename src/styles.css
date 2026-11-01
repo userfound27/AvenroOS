@@ -68,7 +68,7 @@
 .auth-loading .auth-icon{margin:0 auto 14px}
 @media(max-width:900px){.welcome-actions{max-width:none}}
 
-/* StudentOS next-gen landing experience */
+/* AvenroOS next-gen landing experience */
 .welcome-nav-actions{display:flex;align-items:center;gap:10px}
 .nav-auth-link{border:0;background:transparent;color:#d7e0ea;font:inherit;font-size:12px;font-weight:700;padding:10px 12px;cursor:pointer}
 .nav-auth-link:hover{color:#fff}
