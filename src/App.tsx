@@ -409,8 +409,8 @@ function SpaceDetail(p:{space?:Space;setSpaces:Dispatch<SetStateAction<Space[]>>
  <section className="panel space-entry-panel"><div className="panel-head"><div><h3>Quick entries</h3><p>Capture anything that belongs in this Space.</p></div></div><form className="space-entry-form" onSubmit={e=>{e.preventDefault();updateItem(draft)}}><input value={draft} onChange={e=>setDraft(e.target.value)} placeholder="Add a note, idea or next action…" aria-label="New Space entry"/><button className="primary-btn" type="submit" disabled={!draft.trim()}><Plus size={16}/> Add entry</button></form>{p.space.items.length===0?<div className="empty-state"><Sparkles/><p>No entries yet. Add your first one above.</p></div>:<div className="space-entry-list">{p.space.items.map((item,i)=><div className="space-entry-row" key={p.space!.id+"-"+i}><span>{item}</span><button className="icon-btn" aria-label={"Remove "+item} onClick={()=>p.setSpaces(all=>all.map(x=>x.id===p.space!.id?{...x,items:x.items.filter((_,j)=>j!==i)}:x))}><Trash2 size={15}/></button></div>)}</div>}</section></div>
 }
 function calculateArithmetic(expression:string):number{
- const tokens=expression.match(/(?:\\d+(?:\\.\\d*)?|\\.\\d+)|[()+*/%-]/g)||[];
- if(tokens.join("")!==expression.replace(/\\s+/g,""))throw Error("Invalid input");
+ const tokens=expression.match(/(?:\d+(?:\.\d*)?|\.\d+)|[()+*/%-]/g)||[];
+ if(tokens.join("")!==expression.replace(/\s+/g,""))throw Error("Invalid input");
  let pos=0;
  const factor=():number=>{const token=tokens[pos++];if(token==="+")return factor();if(token==="-")return -factor();if(token==="("){const value=expr();if(tokens[pos++]!==")")throw Error("Missing )");return value;}const value=Number(token);if(!Number.isFinite(value)||token===undefined)throw Error("Invalid number");return value};
  const term=():number=>{let value=factor();while(["*","/","%"].includes(tokens[pos])){const op=tokens[pos++],right=factor();if((op==="/"||op==="%")&&right===0)throw Error("Divide by zero");value=op==="*"?value*right:op==="/"?value/right:value%right;}return value};
