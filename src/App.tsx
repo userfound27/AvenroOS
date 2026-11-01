@@ -60,7 +60,7 @@ async function saveCloudData(userId:string,data:SavedData){
 }
 
 function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"account";onExit:()=>Promise<void>|void;onSignIn:()=>void;onDeleteAccount:()=>Promise<string>}){
- const [page,setPage]=useState<Page>(()=>{const saved=sessionStorage.getItem("studentos-page");if(!(window.__studentosData?.spaces?.length))return "spaces";return saved&&["dashboard","spaces","space-detail","study","exams","scores","focus","journey","settings"].includes(saved)?saved as Page:"dashboard"}),[sidebarCollapsed,setSidebarCollapsed]=useState(true),[selectedExamId,setSelectedExamId]=useState<number|null>(null),[selectedSpaceId,setSelectedSpaceId]=useState(()=>sessionStorage.getItem("avenroos-space-id")||""),[spaceModal,setSpaceModal]=useState(false);
+ const [page,setPage]=useState<Page>(()=>{const saved=sessionStorage.getItem("studentos-page");return saved&&saved!=="spaces"&&["dashboard","space-detail","study","exams","scores","focus","journey","settings"].includes(saved)?saved as Page:"dashboard"}),[sidebarCollapsed,setSidebarCollapsed]=useState(true),[selectedExamId,setSelectedExamId]=useState<number|null>(null),[selectedSpaceId,setSelectedSpaceId]=useState(()=>sessionStorage.getItem("avenroos-space-id")||""),[spaceModal,setSpaceModal]=useState(false);
  const initial=window.__studentosData||blankData();
  const [tasks,setTasks]=useState(initial.tasks),[exams,setExams]=useState(initial.exams),[scores,setScores]=useState(initial.scores),[spaces,setSpaces]=useState<Space[]>(initial.spaces||[]);
  const [journey,setJourney]=useState(initial.journey),[classLevel,setClassLevel]=useState(initial.classLevel||""),[displayName,setDisplayName]=useState(initial.displayName||"Student"),[avatarUrl,setAvatarUrl]=useState(initial.avatarUrl||""),[showTask,setShowTask]=useState(false),[editingTask,setEditingTask]=useState<Task|null>(null),[showScore,setShowScore]=useState(false),[showExam,setShowExam]=useState(false);
@@ -87,12 +87,10 @@ function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"a
    <div className="brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div><strong>AvenroOS</strong><span>Spaces. Your way.</span></div></div>
    <nav>
     <NavItem icon={<LayoutDashboard size={18}/>} label="Home" active={page==="dashboard"} onClick={()=>navigate("dashboard")}/>
-    <NavItem icon={<Command size={18}/>} label="Explore Spaces" active={page==="spaces"} onClick={()=>navigate("spaces")}/>
-    <div className="sidebar-section-label">YOUR SPACES</div>
+        <div className="sidebar-section-label">YOUR SPACES</div>
     {spaces.filter(x=>x.enabled).map(space=><NavItem key={space.id} icon={space.template==="study"?<BookOpen size={18}/>:space.template==="workout"?<Gauge size={18}/>:space.template==="projects"?<Target size={18}/>:space.template==="knowledge"?<BookOpen size={18}/>:<Sparkles size={18}/>} label={space.name} active={(page==="space-detail"&&selectedSpaceId===space.id)||(space.template==="study"&&["study","exams","scores","focus","journey"].includes(page))} onClick={()=>openSpace(space.id)}/>)}
-    <button className="nav-item nav-add-space" onClick={()=>setSpaceModal(true)}><Plus size={18}/><span>Create a Space</span></button>
    </nav>
-   <div className="sidebar-bottom"><div className="free-pill"><Zap size={15}/> Pricing</div><NavItem icon={<Settings size={18}/>} label="Settings" active={page==="settings"} onClick={()=>navigate("settings")}/></div>
+   <div className="sidebar-bottom"><NavItem icon={<Settings size={18}/>} label="Settings" active={page==="settings"} onClick={()=>navigate("settings")}/></div>
   </aside>
   {!sidebarCollapsed&&<button className="mobile-sidebar-backdrop" aria-label="Close navigation" onClick={()=>setSidebarCollapsed(true)}/>}
   <main className="main">
@@ -124,7 +122,7 @@ function Dashboard(p:{spaces:Space[];tasks:Task[];exams:Exam[];scores:Score[];na
  const todayTasks=p.tasks.filter(t=>t.date===today);
  const doneTasks=p.tasks.filter(t=>t.done).length;
  const upcoming=[...p.exams].filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
- const average=p.scores.filter(s=>Number.isFinite(s.max)&&s.max>0).length?Math.round(p.scores.filter(s=>Number.isFinite(s.max)&&s.max>0).reduce((n,s)=>n+s.obtained/s.max,0)/p.scores.filter(s=>Number.isFinite(s.max)&&s.max>0).length*100):0;
+
  const activity:{id:string;space:string;icon:string;label:string;detail:string;date:string;open:()=>void}[]=[];
  p.tasks.filter(t=>t.done).forEach(t=>activity.push({id:"task-"+t.id,space:"Study",icon:"✓",label:t.title,detail:"Task completed",date:t.date,open:()=>p.navigate("study")}));
  p.exams.forEach(e=>activity.push({id:"exam-"+e.id,space:"Study",icon:"▦",label:e.name,detail:"Exam · "+e.progress+"% prepared",date:e.date,open:()=>p.navigate("exams")}));
@@ -146,9 +144,8 @@ function Dashboard(p:{spaces:Space[];tasks:Task[];exams:Exam[];scores:Score[];na
    <article className="home-metric"><span>YOUR SPACES</span><strong>{enabled.length}</strong><small>Active workspaces</small></article>
    <article className="home-metric"><span>TASKS COMPLETED</span><strong>{completedAcross}</strong><small>{trackedAcross} tracked items across Spaces</small></article>
    <article className="home-metric"><span>HABIT CHECK-INS</span><strong>{habits}</strong><small>Completed habit days</small></article>
-   <article className="home-metric"><span>STUDY SCORE AVERAGE</span><strong>{p.scores.length?average+"%":"—"}</strong><small>{p.scores.length} recorded results</small></article>
-  </section>
-  <div className="home-section-heading"><div><h3>Your Spaces</h3><p>Jump back into any part of your life.</p></div><button className="text-btn" onClick={()=>p.navigate("spaces")}>Explore Spaces <ChevronRight size={15}/></button></div>
+     </section>
+  <div className="home-section-heading"><div><h3>Spaces</h3><p>Everything you organise, all in one place.</p></div><button className="primary-btn" onClick={p.onCreateSpace}><Plus size={15}/> Create a Space</button></div>
   {enabled.length?<section className="home-space-grid">{enabled.map(space=><button className="home-space-card" key={space.id} onClick={()=>p.openSpace(space.id)}><span className="home-space-icon">{spaceIconEmoji(space.icon)}</span><span className="home-space-name">{space.name}</span><span className="home-space-purpose">{space.purpose||space.description||"Your personal workspace"}</span><span className="home-space-open">Open Space <ChevronRight size={14}/></span></button>)}</section>:<section className="home-empty-spaces"><div className="home-empty-symbol">＋</div><h3>Start by creating your first Space</h3><p>Build a workspace for anything you want to organise. Add templates, widgets and your own structure.</p><button className="primary-btn" onClick={p.onCreateSpace}>Create your first Space</button></section>}
   <div className="home-lower-grid">
    <section className="panel home-activity-panel"><div className="panel-head"><div><h3>Across your Spaces</h3><p>A combined activity log from all your workspaces.</p></div><span className="count-pill">{activity.length} entries</span></div>
