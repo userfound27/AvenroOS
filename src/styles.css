@@ -525,3 +525,18 @@ input:focus,.setting-input:focus,.field input:focus{border-color:#ff704c;outline
  .sidebar-toggle.is-open .toggle-menu{display:none}
  .sidebar.collapsed+.main{margin-left:0;width:100%}
 }
+
+/* Keep the expanded brand lockup clear of the navigation toggle */
+.brand{width:calc(100% - 78px);max-width:calc(100% - 78px);min-width:0;gap:10px;overflow:hidden}
+.brand>div:last-child{flex:1;min-width:0}
+.brand strong{white-space:nowrap}
+.brand span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;letter-spacing:-.12px}
+.sidebar-toggle{width:52px;height:52px;top:14px;border-radius:17px}
+.sidebar-toggle.is-open{left:190px}
+.sidebar.collapsed .brand{width:100%;max-width:100%}
+.sidebar.collapsed .brand>div:nth-child(2){display:none}
+@media(max-width:760px){
+ .brand{width:calc(100% - 66px);max-width:calc(100% - 66px)}
+ .sidebar-toggle{width:46px;height:46px;top:13px;left:14px;border-radius:14px}
+ .sidebar-toggle.is-open{left:190px}
+}
