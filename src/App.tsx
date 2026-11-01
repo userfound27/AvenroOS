@@ -495,7 +495,7 @@ function SpaceWidget(p:{type:string;index:number;data:string[];save:(value:strin
   const dates=p.data.filter(x=>/^\\d{4}-\\d{2}-\\d{2}$/.test(x)).sort();
   const skips=p.data.filter(x=>x.startsWith("!")).map(x=>x.slice(1));
   const completed=dates.includes(today),dayIndex=(new Date(today+"T00:00:00").getDay()+6)%7;
-  const scheduled=(date:string)=>{const d=new Date(date+"T00:00:00");const day=(d.getDay()+6)%7;return config.frequency==="daily"||config.frequency==="weekdays"&&day<5};
+  const scheduled=(date:string)=>{const d=new Date(date+"T00:00:00");const day=(d.getDay()+6)%7;return config.frequency==="daily"||config.frequency==="weekly"||(config.frequency==="weekdays"&&day<5)};
   const weekStart=new Date(today+"T00:00:00");weekStart.setDate(weekStart.getDate()-dayIndex);
   const weekDates=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(d.getDate()+i);return d.toISOString().slice(0,10)});
   const thisWeek=dates.filter(x=>x>=weekDates[0]&&x<=weekDates[6]).length;
