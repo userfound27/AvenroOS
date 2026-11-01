@@ -974,3 +974,23 @@ textarea:focus-visible{outline-color:var(--accent)!important}
 :root[data-motion="full"] .panel,
 :root[data-motion="full"] .setting-block,
 :root[data-motion="full"] button{transition:background-color .38s ease,color .38s ease,border-color .38s ease,box-shadow .38s ease!important}
+
+
+/* Profile controls and remaining brand accents follow the chosen accent */
+.profile-image-button{
+ border:2px solid var(--accent)!important;
+ box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 16%,transparent),0 0 0 9px color-mix(in srgb,var(--accent) 7%,transparent)!important;
+}
+.profile-edit-badge{
+ background:var(--accent)!important;
+ color:#fff!important;
+ border:2px solid var(--app-panel,#101923)!important;
+ box-shadow:0 3px 12px color-mix(in srgb,var(--accent) 28%,transparent)!important;
+}
+.profile-image-button:hover{border-color:var(--accent)!important;box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 20%,transparent)!important}
+.brand-mark{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 72%,white))!important;box-shadow:0 8px 25px color-mix(in srgb,var(--accent) 20%,transparent)!important}
+.sidebar .nav-item.active::before,
+.sidebar .nav-item.active::after{background:var(--accent)!important;border-color:var(--accent)!important}
+.settings-page .profile-editor .profile-image-button,
+.settings-page .profile-edit-badge,
+.settings-page .profile-editor svg{transition:background-color .38s ease,border-color .38s ease,color .38s ease,box-shadow .38s ease}
