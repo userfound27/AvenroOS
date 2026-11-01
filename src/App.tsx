@@ -119,13 +119,14 @@ function FeatureCard(p:{number:string;icon:ReactNode;title:string;text:string}){
 function NavItem(p:{icon:ReactNode;label:string;active:boolean;onClick:()=>void}){return <button className={p.active?"nav-item active":"nav-item"} onClick={p.onClick}>{p.icon}<span>{p.label}</span>{p.active&&<ChevronRight size={15}/>}</button>}
 function Dashboard(p:{spaces:Space[];tasks:Task[];exams:Exam[];scores:Score[];navigate:(x:Page)=>void;openSpace:(id:string)=>void;onCreateSpace:()=>void;setTasks:Dispatch<SetStateAction<Task[]>>}){
  const enabled=p.spaces.filter(x=>x.enabled);
+ const [hidden,setHidden]=useState<string[]>(()=>{try{return JSON.parse(localStorage.getItem("avenroos-home-hidden")||"[]")}catch{return[]}});
+ const [customising,setCustomising]=useState(false);
+ const hide=(id:string)=>setHidden(all=>{const next=[...all,id];localStorage.setItem("avenroos-home-hidden",JSON.stringify(next));return next});
+ const restore=(id:string)=>setHidden(all=>{const next=all.filter(x=>x!==id);localStorage.setItem("avenroos-home-hidden",JSON.stringify(next));return next});
  const todayTasks=p.tasks.filter(t=>t.date===today);
- const doneTasks=p.tasks.filter(t=>t.done).length;
- const upcoming=[...p.exams].filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
-
  const activity:{id:string;space:string;icon:string;label:string;detail:string;date:string;open:()=>void}[]=[];
  p.tasks.filter(t=>t.done).forEach(t=>activity.push({id:"task-"+t.id,space:"Study",icon:"✓",label:t.title,detail:"Task completed",date:t.date,open:()=>p.navigate("study")}));
- p.exams.forEach(e=>activity.push({id:"exam-"+e.id,space:"Study",icon:"▦",label:e.name,detail:"Exam · "+e.progress+"% prepared",date:e.date,open:()=>p.navigate("exams")}));
+ p.exams.forEach(e=>activity.push({id:"exam-"+e.id,space:"Study",icon:"▦",label:e.name,detail:"Assessment · "+e.progress+"% prepared",date:e.date,open:()=>p.navigate("exams")}));
  p.scores.forEach(sc=>activity.push({id:"score-"+sc.id,space:"Study",icon:"↗",label:sc.test+" · "+sc.subject,detail:sc.max>0?sc.obtained+"/"+sc.max+" marks":"Score recorded",date:sc.date,open:()=>p.navigate("scores")}));
  enabled.forEach(space=>{
   (space.items||[]).forEach((item,i)=>activity.push({id:space.id+"-entry-"+i,space:space.name,icon:spaceIconEmoji(space.icon),label:item,detail:"Space entry",date:today,open:()=>p.openSpace(space.id)}));
@@ -135,30 +136,35 @@ function Dashboard(p:{spaces:Space[];tasks:Task[];exams:Exam[];scores:Score[];na
   }));
  });
  activity.sort((a,b)=>b.date.localeCompare(a.date));
- const habits=enabled.reduce((n,space)=>n+Object.entries(space.widgetData||{}).filter(([k])=>k==="habit").reduce((m,[,v])=>m+(v||[]).filter(x=>/^\\d{4}-\\d{2}-\\d{2}$/.test(x)).length,0),0);
- const completedAcross=enabled.reduce((n,space)=>n+Object.values(space.widgetData||{}).flat().filter(x=>x.startsWith("[x] ")).length,doneTasks);
- const trackedAcross=enabled.reduce((n,space)=>n+Object.values(space.widgetData||{}).flat().filter(x=>!/^\\d+$/.test(x)&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(x)).length,p.tasks.length);
+ const habitToday=enabled.reduce((n,space)=>n+Object.entries(space.widgetData||{}).filter(([k])=>k==="habit").reduce((m,[,v])=>m+(v||[]).filter(x=>x===today).length,0),0);
+ const completedWidgetItems=enabled.reduce((n,space)=>n+Object.values(space.widgetData||{}).flat().filter(x=>x.startsWith("[x] ")).length,0);
+ const completedToday=todayTasks.filter(t=>t.done).length+completedWidgetItems+habitToday;
+ const trackedToday=todayTasks.length+completedWidgetItems+habitToday;
+ const upcoming=[...p.exams].filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+ const sections=[{id:"activity",label:"Across your Spaces"},{id:"upcoming",label:"Coming up"},{id:"today",label:"Today"}];
  return <div className="stack dashboard-stack home-overview">
-  <section className="home-welcome"><div><span className="eyebrow">YOUR LIFE, IN ONE VIEW</span><h2>Your overview.</h2><p>A live snapshot of what’s happening across all your Spaces.</p></div></section>
+  <section className="home-welcome"><div><span className="eyebrow">YOUR LIFE, IN ONE VIEW</span><h2>Your overview.</h2><p>A live snapshot of what’s happening across all your Spaces.</p></div><button className="ghost-btn home-customise-btn" onClick={()=>setCustomising(v=>!v)}><Settings size={15}/>{customising?"Done":"Customise Home"}</button></section>
+  {customising&&<section className="panel home-customise-panel"><div><strong>Choose what appears on Home</strong><p>Hide sections you don't need. You can bring them back any time.</p></div>{sections.map(section=><label key={section.id}><span>{section.label}</span><input type="checkbox" checked={!hidden.includes(section.id)} onChange={e=>e.target.checked?restore(section.id):hide(section.id)}/></label>)}</section>}
   <section className="home-metrics">
    <article className="home-metric"><span>YOUR SPACES</span><strong>{enabled.length}</strong><small>Active workspaces</small></article>
-   <article className="home-metric"><span>TASKS COMPLETED</span><strong>{completedAcross}</strong><small>{trackedAcross} tracked items across Spaces</small></article>
-   <article className="home-metric"><span>HABIT CHECK-INS</span><strong>{habits}</strong><small>Completed habit days</small></article>
-     </section>
+   <article className="home-metric"><span>COMPLETED TODAY</span><strong>{completedToday}</strong><small>Across tracked Spaces</small></article>
+   <article className="home-metric"><span>ACTIVITY ENTRIES</span><strong>{activity.length}</strong><small>Across your workspace</small></article>
+  </section>
   <div className="home-section-heading"><div><h3>Spaces</h3><p>Everything you organise, all in one place.</p></div>{enabled.length>0&&<button className="primary-btn" onClick={p.onCreateSpace}><Plus size={15}/> Create a Space</button>}</div>
   {enabled.length?<section className="home-space-grid">{enabled.map(space=><button className="home-space-card" key={space.id} onClick={()=>p.openSpace(space.id)}><span className="home-space-icon">{spaceIconEmoji(space.icon)}</span><span className="home-space-name">{space.name}</span><span className="home-space-purpose">{space.purpose||space.description||"Your personal workspace"}</span><span className="home-space-open">Open Space <ChevronRight size={14}/></span></button>)}</section>:<section className="home-empty-spaces"><div className="home-empty-symbol">＋</div><h3>Start by creating your first Space</h3><p>Build a workspace for anything you want to organise. Add templates, widgets and your own structure.</p><button className="primary-btn" onClick={p.onCreateSpace}>Create your first Space</button></section>}
   <div className="home-lower-grid">
-   <section className="panel home-activity-panel"><div className="panel-head"><div><h3>Across your Spaces</h3><p>A combined activity log from all your workspaces.</p></div><span className="count-pill">{activity.length} entries</span></div>
+   {!hidden.includes("activity")&&<section className="panel home-activity-panel"><div className="panel-head"><div><h3>Across your Spaces</h3><p>A combined activity log from all your workspaces.</p></div><div className="home-panel-actions"><span className="count-pill">{activity.length} entries</span><button className="icon-btn home-hide-btn" title="Hide activity section" aria-label="Hide activity section" onClick={()=>hide("activity")}><X size={15}/></button></div></div>
     {activity.length?<div className="home-activity-list">{activity.slice(0,18).map(item=><button className="home-activity-row" key={item.id} onClick={item.open}><span className="home-activity-icon">{item.icon}</span><span className="home-activity-copy"><strong>{item.label}</strong><small>{item.space} · {item.detail}</small></span><time>{item.date===today?"Today":item.date||"In Space"}</time><ChevronRight size={15}/></button>)}</div>:<div className="home-activity-empty"><Sparkles size={20}/><strong>Your activity will appear here.</strong><span>Tasks, notes, habits and updates from your Spaces will come together in this feed.</span></div>}
-   </section>
+   </section>}
    <aside className="home-side-column">
-    <section className="panel home-next-panel"><div className="panel-head"><div><h3>Coming up</h3><p>Your next deadlines and plans.</p></div></div>{upcoming.length?upcoming.slice(0,4).map(exam=><button className="home-upcoming-row" key={exam.id} onClick={()=>p.navigate("exams")}><span className="home-date-tile"><strong>{new Date(exam.date+"T12:00:00").getDate()}</strong><small>{new Date(exam.date+"T12:00:00").toLocaleString("en",{month:"short"})}</small></span><span><strong>{exam.name}</strong><small>{exam.subject} · {exam.progress}% prepared</small></span></button>):<p className="home-muted">Nothing scheduled. Your Spaces are clear.</p>}</section>
-    <section className="panel home-today-panel"><div className="panel-head"><div><h3>Today</h3><p>Your daily pulse.</p></div></div><div className="home-today-stat"><strong>{todayTasks.filter(t=>t.done).length}/{todayTasks.length}</strong><span>Study tasks completed today</span></div><div className="progress"><i style={{width:(todayTasks.length?todayTasks.filter(t=>t.done).length/todayTasks.length*100:0)+"%"}}/></div><button className="text-btn" onClick={()=>p.navigate("spaces")}>View your Spaces <ChevronRight size={14}/></button></section>
+    {!hidden.includes("upcoming")&&<section className="panel home-next-panel"><div className="panel-head"><div><h3>Coming up</h3><p>Upcoming dates from your workspace.</p></div><button className="icon-btn home-hide-btn" title="Hide Coming up" aria-label="Hide Coming up" onClick={()=>hide("upcoming")}><X size={15}/></button></div>{upcoming.length?upcoming.slice(0,4).map(exam=><button className="home-upcoming-row" key={exam.id} onClick={()=>p.navigate("exams")}><span className="home-date-tile"><strong>{new Date(exam.date+"T12:00:00").getDate()}</strong><small>{new Date(exam.date+"T12:00:00").toLocaleString("en",{month:"short"})}</small></span><span><strong>{exam.name}</strong><small>Study · {exam.subject} · {exam.progress}% prepared</small></span></button>):<p className="home-muted">Nothing scheduled. Your Spaces are clear.</p>}</section>}
+    {!hidden.includes("today")&&<section className="panel home-today-panel"><div className="panel-head"><div><h3>Today</h3><p>Your daily pulse across Spaces.</p></div><button className="icon-btn home-hide-btn" title="Hide Today" aria-label="Hide Today" onClick={()=>hide("today")}><X size={15}/></button></div><div className="home-today-stat"><strong>{completedToday}/{trackedToday}</strong><span>Tracked actions completed today</span></div><div className="progress"><i style={{width:(trackedToday?completedToday/trackedToday*100:0)+"%"}}/></div><button className="text-btn" onClick={()=>p.navigate("spaces")}>View your Spaces <ChevronRight size={14}/></button></section>}
+    {hidden.includes("activity")&&hidden.includes("upcoming")&&hidden.includes("today")&&<section className="panel home-restore-panel"><strong>Your Home is yours to arrange.</strong><p>All overview sections are hidden.</p><button className="primary-btn small" onClick={()=>{setHidden([]);localStorage.setItem("avenroos-home-hidden","[]")}}>Restore all sections</button></section>}
    </aside>
   </div>
+  {hidden.length>0&&<div className="home-restore-link"><button className="text-btn" onClick={()=>{setHidden([]);localStorage.setItem("avenroos-home-hidden","[]")}}>Restore hidden Home sections</button></div>}
  </div>
 }
-
 function Study(p:{tasks:Task[];setTasks:Dispatch<SetStateAction<Task[]>>;onAdd:()=>void;onEditTask:(task:Task)=>void;onDeleteTask:(id:number)=>void;onFocus:(task:Task)=>void}){const [filter,setFilter]=useState("All");const subjects=["All",...Array.from(new Set(p.tasks.map(t=>t.subject)))];const shown=filter==="All"?p.tasks:p.tasks.filter(t=>t.subject===filter);return <div className="stack"><PageIntro title="Study command center" text="Turn your syllabus into small, finishable sessions." action={<button className="primary-btn" onClick={p.onAdd}><Plus size={17}/> Add study session</button>}/><div className="filter-row">{subjects.map(s=><button key={s} className={filter===s?"filter active":"filter"} onClick={()=>setFilter(s)}>{s}</button>)}</div><section className="panel"><div className="panel-head"><div><h3>Study sessions</h3><p>Tap a session when it is done.</p></div><span className="count-pill">{shown.filter(t=>t.done).length+"/"+shown.length}</span></div><div className="task-list large">{shown.map(t=><TaskRow key={t.id} task={t} toggle={()=>p.setTasks(all=>all.map(x=>x.id===t.id?{...x,done:!x.done}:x))} onEdit={()=>p.onEditTask(t)} onDelete={()=>p.onDeleteTask(t.id)} onFocus={()=>p.onFocus(t)} detailed/>)}</div></section></div>}
 function Exams(p:{exams:Exam[];setExams:Dispatch<SetStateAction<Exam[]>>;onAdd:()=>void;selectedExamId:number|null;setSelectedExamId:(id:number|null)=>void}){
  return <div className="stack"><PageIntro title="Exam control" text="Know what's coming and how ready you actually are." action={<button className="primary-btn" onClick={p.onAdd}><Plus size={17}/> Add exam</button>}/>
