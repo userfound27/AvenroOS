@@ -612,3 +612,7 @@ input:focus,.setting-input:focus,.field input:focus{border-color:#ff704c;outline
 .space-widget-position:hover .widget-drag-handle{opacity:1}
 .space-widget-position[draggable=true] .space-widget{height:100%}
 .habit-history-count{font-size:10px;color:#91a1aa;margin:8px 0 12px}
+
+/* Keep assessment breakdown readable on narrow screens */
+.assessment-subjects{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.assessment-subject-head,.assessment-subject-row,.assessment-total{min-width:420px}
