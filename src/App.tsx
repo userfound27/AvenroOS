@@ -4,7 +4,8 @@ import { supabase } from "./lib/supabase";
 const AVENROOS_ICON = "/avenroos-logo.webp?v=6";
 import { ArrowUpRight, BookOpen, CalendarDays, Check, ChevronRight, Clock3, Command, Flame, Gauge, GraduationCap, LayoutDashboard, Menu, Pencil, Plus, LogOut, Settings, Sparkles, Target, Trash2, Trophy, TrendingUp, Upload, UserRound, X, Zap } from "lucide-react";
 
-type Page = "dashboard" | "study" | "exams" | "scores" | "focus" | "journey" | "settings";
+type Page = "dashboard" | "spaces" | "space-detail" | "study" | "exams" | "scores" | "focus" | "journey" | "settings";
+type Space = {id:string;name:string;icon:string;description:string;kind:string;items:string[];enabled:boolean};
 type Task = { id:number; title:string; subject:string; date:string; done:boolean; minutes:number };
 type ExamLesson = { id:number; title:string; done:boolean };
 type Exam = { id:number; name:string; subject:string; date:string; portion:string; progress:number; lessons:ExamLesson[]; revisionRounds:number; practiceTests:number; confidence:number; weakAreas:string };
@@ -26,7 +27,7 @@ const seedScores:Score[]=[
  {id:3,subject:"English",test:"Periodic Test",obtained:37,max:40,date:"2026-09-10"}
 ];
 
-type SavedData = { tasks:Task[]; exams:Exam[]; scores:Score[]; journey:string; classLevel:string; displayName:string; avatarUrl:string };
+type SavedData = { tasks:Task[]; exams:Exam[]; scores:Score[]; spaces:Space[]; journey:string; classLevel:string; displayName:string; avatarUrl:string };
 declare global { interface Window { __studentosData?: SavedData; __studentosEmail?: string; __studentosUserId?: string; __studentosUpdate?:()=>Promise<void> } }
 
 
@@ -37,7 +38,7 @@ function normalizeExam(exam:Partial<Exam>):Exam{
  return {id:Number(exam.id)||Date.now(),name:String(exam.name||"New exam"),subject:String(exam.subject||"Other"),date:String(exam.date||today),portion:String(exam.portion||lessons.map(l=>l.title).join(", ")),progress,lessons,revisionRounds:Math.max(0,Number(exam.revisionRounds)||0),practiceTests:Math.max(0,Number(exam.practiceTests)||0),confidence:Math.min(5,Math.max(0,Number(exam.confidence)||0)),weakAreas:String(exam.weakAreas||"")};
 }
 function blankData():SavedData{
- return {tasks:seedTasks.map(x=>({...x})),exams:seedExams.map(x=>normalizeExam(x)),scores:seedScores.map(x=>({...x})),journey:"Make meaningful progress",classLevel:"",displayName:"Student",avatarUrl:""};
+ return {tasks:seedTasks.map(x=>({...x})),exams:seedExams.map(x=>normalizeExam(x)),scores:seedScores.map(x=>({...x})),spaces:[],journey:"Make meaningful progress",classLevel:"",displayName:"",avatarUrl:""};
 }
 
 async function loadCloudData(userId:string):Promise<SavedData>{
@@ -46,7 +47,7 @@ async function loadCloudData(userId:string):Promise<SavedData>{
  if(error){console.error(error);return blankData();}
  if(!data?.data)return blankData();
  const merged={...blankData(),...(data.data as Partial<SavedData>)};
- return {...merged,exams:(merged.exams||[]).map(e=>normalizeExam(e))};
+ return {...merged,exams:(merged.exams||[]).map(e=>normalizeExam(e)),spaces:Array.isArray(merged.spaces)?merged.spaces:[]};
 }
 
 async function saveCloudData(userId:string,data:SavedData){
@@ -56,33 +57,36 @@ async function saveCloudData(userId:string,data:SavedData){
 }
 
 function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"account";onExit:()=>Promise<void>|void;onSignIn:()=>void;onDeleteAccount:()=>Promise<string>}){
- const [page,setPage]=useState<Page>(()=>{const saved=sessionStorage.getItem("studentos-page");return saved&&["dashboard","study","exams","scores","focus","journey","settings"].includes(saved)?saved as Page:"dashboard"}),[sidebarCollapsed,setSidebarCollapsed]=useState(true),[selectedExamId,setSelectedExamId]=useState<number|null>(null);
+ const [page,setPage]=useState<Page>(()=>{const saved=sessionStorage.getItem("studentos-page");return saved&&["dashboard","spaces","space-detail","study","exams","scores","focus","journey","settings"].includes(saved)?saved as Page:"dashboard"}),[sidebarCollapsed,setSidebarCollapsed]=useState(true),[selectedExamId,setSelectedExamId]=useState<number|null>(null),[selectedSpaceId,setSelectedSpaceId]=useState(""),[spaceModal,setSpaceModal]=useState(false);
  const initial=window.__studentosData||blankData();
- const [tasks,setTasks]=useState(initial.tasks),[exams,setExams]=useState(initial.exams),[scores,setScores]=useState(initial.scores);
+ const [tasks,setTasks]=useState(initial.tasks),[exams,setExams]=useState(initial.exams),[scores,setScores]=useState(initial.scores),[spaces,setSpaces]=useState<Space[]>(initial.spaces||[]);
  const [journey,setJourney]=useState(initial.journey),[classLevel,setClassLevel]=useState(initial.classLevel||""),[displayName,setDisplayName]=useState(initial.displayName||"Student"),[avatarUrl,setAvatarUrl]=useState(initial.avatarUrl||""),[showTask,setShowTask]=useState(false),[editingTask,setEditingTask]=useState<Task|null>(null),[showScore,setShowScore]=useState(false),[showExam,setShowExam]=useState(false);
  const [focusSeconds,setFocusSeconds]=useState(1500),[focusMinutes,setFocusMinutes]=useState(25),[focusRunning,setFocusRunning]=useState(false),[focusTaskTitle,setFocusTaskTitle]=useState(""),[accountError,setAccountError]=useState("");
  useEffect(()=>{
   if(mode!=="account"||!window.__studentosUserId)return;
-  const payload={tasks,exams,scores,journey,classLevel,displayName,avatarUrl};
+  const payload={tasks,exams,scores,spaces,journey,classLevel,displayName,avatarUrl};
   const timer=window.setTimeout(()=>{void saveCloudData(window.__studentosUserId!,payload)},250);
   return()=>window.clearTimeout(timer);
- },[mode,tasks,exams,scores,journey,classLevel,displayName,avatarUrl]);
+ },[mode,tasks,exams,scores,spaces,journey,classLevel,displayName,avatarUrl]);
  useEffect(()=>{if(!focusRunning)return;const timer=window.setInterval(()=>setFocusSeconds(s=>{if(s<=1){setFocusRunning(false);return focusMinutes*60}return s-1}),1000);return()=>window.clearInterval(timer)},[focusRunning,focusMinutes]);
  useEffect(()=>{window.__studentosUpdate=async()=>{if(!("serviceWorker" in navigator))return false;const registration=await navigator.serviceWorker.getRegistration();if(!registration)return false;const previousWaiting=registration.waiting;await registration.update();const installing=registration.installing;if(installing){await new Promise<void>(resolve=>{const done=()=>{if(installing.state==="installed"||installing.state==="redundant"){installing.removeEventListener("statechange",done);resolve()}};installing.addEventListener("statechange",done);});}const waiting=registration.waiting;if(!waiting||waiting===previousWaiting)return false;sessionStorage.setItem("studentos-page",page);waiting.postMessage({type:"SKIP_WAITING"});await new Promise<void>(resolve=>{const timer=window.setTimeout(resolve,5000);navigator.serviceWorker.addEventListener("controllerchange",()=>{window.clearTimeout(timer);resolve()},{once:true})});window.location.reload();return true};return()=>{delete window.__studentosUpdate}},[page]);
  useEffect(()=>{sessionStorage.setItem("studentos-page",page)},[page]);
  const completed=tasks.filter(t=>t.done).length;
  const scoreAverage=scores.length?Math.round(scores.reduce((a,s)=>a+s.obtained/s.max,0)/scores.length*100):0;
- const navigate=(p:Page)=>{setPage(p);setMobileNav(false)}; const profileAction=()=>{navigate("settings")};
+ const navigate=(p:Page)=>{setPage(p);setSidebarCollapsed(true)}; const openSpace=(id:string)=>{setSelectedSpaceId(id);navigate("space-detail")}; const profileAction=()=>{navigate("settings")};
  const saveProfile=async(name:string,file?:File)=>{if(mode!=="account"||!supabase||!window.__studentosUserId)return "Sign in to update your profile.";const nextName=name.trim().slice(0,60);if(!nextName)return "Enter a display name.";let nextAvatar=avatarUrl;if(file){const allowed=["image/jpeg","image/png","image/webp","image/gif"];if(!allowed.includes(file.type))return "Choose a JPG, PNG, WebP, or GIF image.";if(file.size>5*1024*1024)return "Choose an image smaller than 5 MB.";const path=window.__studentosUserId+"/avatar";const bucket=supabase.storage.from("studentos-avatars");const {error:uploadError}=await bucket.upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});if(uploadError)return "Image upload failed: "+uploadError.message;const {data:urlData}=bucket.getPublicUrl(path);nextAvatar=urlData.publicUrl+"?v="+Date.now();}const {error:authError}=await supabase.auth.updateUser({data:{display_name:nextName,avatar_url:nextAvatar}});if(authError)return "Profile save failed: "+authError.message;setDisplayName(nextName);setAvatarUrl(nextAvatar);return "";};
  return <div className="app-shell">
   <button className={"sidebar-toggle "+(sidebarCollapsed?"is-closed":"is-open")} aria-label={sidebarCollapsed?"Open navigation":"Close navigation"} aria-expanded={!sidebarCollapsed} onClick={()=>setSidebarCollapsed(v=>!v)}>
    <span className="toggle-icon toggle-menu"><Menu size={21}/></span><span className="toggle-icon toggle-close"><X size={21}/></span>
   </button>
   <aside className={"sidebar "+(sidebarCollapsed?"collapsed":"")}>
-   <div className="brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div><strong>AvenroOS</strong><span>your school operating system</span></div></div>
+   <div className="brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div><strong>AvenroOS</strong><span>your personal operating system</span></div></div>
    <nav>
     <NavItem icon={<LayoutDashboard size={18}/>} label="Dashboard" active={page==="dashboard"} onClick={()=>navigate("dashboard")}/>
-    <NavItem icon={<BookOpen size={18}/>} label="Study" active={page==="study"} onClick={()=>navigate("study")}/>
+    <NavItem icon={<Command size={18}/>} label="Spaces" active={page==="spaces"} onClick={()=>navigate("spaces")}/>
+    {spaces.filter(x=>x.enabled).map(space=><NavItem key={space.id} icon={<Sparkles size={18}/>} label={space.name} active={page==="space-detail"&&selectedSpaceId===space.id} onClick={()=>openSpace(space.id)}/>)}
+    <div className="sidebar-section-label">STUDY</div>
+    <NavItem icon={<BookOpen size={18}/>} label="Overview" active={page==="study"} onClick={()=>navigate("study")}/>
     <NavItem icon={<CalendarDays size={18}/>} label="Exams" active={page==="exams"} onClick={()=>navigate("exams")}/>
     <NavItem icon={<TrendingUp size={18}/>} label="Scores" active={page==="scores"} onClick={()=>navigate("scores")}/>
     <NavItem icon={<Clock3 size={18}/>} label="Focus" active={page==="focus"} onClick={()=>navigate("focus")}/>
@@ -94,6 +98,8 @@ function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"a
   <main className="main">
    <header className="topbar"><div><div className="eyebrow">AVENROOS</div><h1>{pageTitle(page)}</h1></div><div className="top-actions"><div className="mode-badge"><span className="dot"/>{mode==="account"?"Saved account":"Anonymous session"}</div>{mode==="account"&&<button className="ghost-btn top-logout" onClick={()=>void onExit()} title="Log out"><LogOut size={15}/> Log out</button>}<button className="avatar" onClick={profileAction} title="Open profile settings">{avatarUrl?<img src={avatarUrl} alt="Profile"/>:displayName.slice(0,1).toUpperCase()||"S"}</button></div></header>
    <div className="content">
+    {page==="spaces"&&<SpacesPage spaces={spaces} setSpaces={setSpaces} openSpace={openSpace} onCreate={()=>setSpaceModal(true)}/>}
+    {page==="space-detail"&&<SpaceDetail space={spaces.find(x=>x.id===selectedSpaceId)} setSpaces={setSpaces} back={()=>navigate("spaces")}/>}
     {page==="dashboard"&&<Dashboard journey={journey} classLevel={classLevel} completed={completed} tasks={tasks} exams={exams} scoreAverage={scoreAverage} navigate={navigate} setTasks={setTasks} onAddTask={()=>setShowTask(true)} onEditTask={setEditingTask} onDeleteTask={id=>setTasks(all=>all.filter(x=>x.id!==id))}/>} 
     {page==="study"&&<Study tasks={tasks} setTasks={setTasks} onAdd={()=>setShowTask(true)} onEditTask={setEditingTask} onDeleteTask={id=>setTasks(all=>all.filter(x=>x.id!==id))} onFocus={task=>{setFocusTaskTitle(task.title);setFocusMinutes(task.minutes);setFocusSeconds(task.minutes*60);setFocusRunning(false);setPage("focus")}}/>}
     {page==="exams"&&<Exams exams={exams} setExams={setExams} onAdd={()=>setShowExam(true)} selectedExamId={selectedExamId} setSelectedExamId={setSelectedExamId}/>}
@@ -107,6 +113,7 @@ function AvenroOSApp({mode,onExit,onSignIn,onDeleteAccount}:{mode:"anonymous"|"a
   {editingTask&&<TaskModal task={editingTask} close={()=>setEditingTask(null)} save={updated=>{setTasks(all=>all.map(x=>x.id===updated.id?updated:x));setEditingTask(null)}}/>}
   {showScore&&<ScoreModal close={()=>setShowScore(false)} add={s=>{setScores(x=>[...x,s]);setShowScore(false)}}/>}
   {showExam&&<ExamModal close={()=>setShowExam(false)} add={e=>{setExams(x=>[...x,e]);setShowExam(false)}}/>}
+  {spaceModal&&<CreateSpaceModal close={()=>setSpaceModal(false)} create={space=>{setSpaces(all=>[...all,space]);setSpaceModal(false);openSpace(space.id)}}/>}
  </div>
 }
 
@@ -354,70 +361,24 @@ function AuthModal(p:{mode:"signin"|"signup";setMode:(m:"signin"|"signup")=>void
 
 function Welcome(p:{onAnonymous:()=>void;openAuth:(m:"signin"|"signup")=>void;onSocial:(x:"google"|"notion")=>void;error:string}){
  const [intro,setIntro]=useState(true);
- const [scrollY,setScrollY]=useState(0);
- useEffect(()=>{
-   const onScroll=()=>setScrollY(window.scrollY);
-   window.addEventListener("scroll",onScroll,{passive:true});
-   const t=window.setTimeout(()=>setIntro(false),1450);
-   return()=>{window.removeEventListener("scroll",onScroll);window.clearTimeout(t)};
- },[]);
- const drift=(speed:number)=>({transform:`translate3d(0,${Math.min(120,scrollY*speed)}px,0)`});
- return <>
-  {intro&&<div className="landing-intro-v2" aria-hidden="true"><div className="landing-intro-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div><div className="landing-intro-word">AVENROOS</div><div className="landing-intro-line"/></div>}
-  <main className="welcome-main-v2"><div className="scroll-object-v2" style={{transform:`translate3d(0,${Math.min(180,scrollY*.22)}px,0) rotate(${Math.min(28,scrollY*.035)}deg)`}}><div className="scroll-object-core"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div></div>
-  <section className="landing-hero-v2">
-   <div className="landing-hero-copy">
-    <div className="landing-eyebrow"><span/> AVENROOS · YOUR SCHOOL OS</div>
-    <h1>Know what matters.<br/><em>Do what matters.</em></h1>
-    <div className="landing-punchline">Turn school chaos into a system.</div>
-    <p>One calm workspace for your tasks, exams, scores, focus sessions and the journey you're building beyond school.</p>
-    <div className="landing-actions-v2">
-      <button className="landing-primary-v2" onClick={()=>p.openAuth("signup")}>Build my workspace <ChevronRight size={17}/></button>
-      <button className="landing-text-v2" onClick={p.onAnonymous}>Explore anonymously <ArrowUpRight size={16}/></button>
-    </div>
-    <div className="landing-proof-v2"><span>NO CARD REQUIRED</span><i/> <span>ANONYMOUS FIRST</span><i/> <span>SYNC WHEN YOU SIGN IN</span></div>
-   </div>
-   <div className="landing-stage-v2"><div className="stage-orbit stage-orbit-a" style={drift(-.08)}/><div className="stage-orbit stage-orbit-b" style={drift(.12)}/>
-    <div className="stage-glow"/>
-    <div className="stage-label">LIVE WORKSPACE <span>●</span></div>
-    <div className="stage-window">
-      <div className="stage-top"><div className="stage-brand"><div className="stage-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true" /></div> AVENROOS</div><span>MONDAY · 08:42</span></div>
-      <div className="stage-body">
-       <span className="stage-kicker">YOUR NEXT MOVE</span>
-       <h2>Finish what<br/><b>matters today.</b></h2>
-       <div className="stage-focus"><div><span>FOCUS</span><strong>25:00</strong></div><div><span>TASKS</span><strong>4 open</strong></div><div><span>EXAMS</span><strong>2 next</strong></div></div>
-       <div className="stage-line"><span>JOURNEY</span><b>68%</b><i><em/></i></div>
-      </div>
-    </div>
-    <div className="stage-float stage-score" style={drift(.16)}><TrendingUp size={14}/><span>Score average</span><b>92%</b></div>
-    <div className="stage-float stage-mission" style={drift(-.12)}><Target size={14}/><span>Today</span><b>Maths · 45 min</b></div>
-   </div>
-  </section>
+ useEffect(()=>{const t=window.setTimeout(()=>setIntro(false),1200);return()=>window.clearTimeout(t)},[]);
+ const start=()=>p.openAuth("signup");
+ return <>{intro&&<div className="landing-intro-v2" aria-hidden="true"><div className="landing-intro-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true"/></div><div className="landing-intro-word">AVENROOS</div><div className="landing-intro-line"/></div>}
+ <main className="welcome-main-v2">
+ <section className="landing-hero-v2"><div className="landing-hero-copy"><div className="landing-eyebrow"><span/> A PERSONAL OPERATING SYSTEM</div><h1>Make room for<br/><em>what matters.</em></h1><div className="landing-punchline">A clearer way to run your everyday.</div><p>AvenroOS brings your plans, projects, learning and personal systems into one considered workspace. Start with what you need. Shape the rest as you go.</p><div className="landing-actions-v2"><button className="landing-primary-v2" onClick={start}>Create your workspace <ChevronRight size={17}/></button><button className="landing-text-v2" onClick={p.onAnonymous}>Explore anonymously <ArrowUpRight size={16}/></button></div><div className="landing-proof-v2"><span>START WITH TEMPLATES</span><i/><span>MAKE IT YOURS</span><i/><span>ONE CONNECTED WORKSPACE</span></div></div>
+ <div className="landing-stage-v2"><div className="stage-orbit stage-orbit-a"/><div className="stage-orbit stage-orbit-b"/><div className="stage-glow"/><div className="stage-label">YOUR WORKSPACE <span>●</span></div><div className="stage-window"><div className="stage-top"><div className="stage-brand"><div className="stage-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true"/></div> AVENROOS</div><span>ONE PLACE · YOUR WAY</span></div><div className="stage-body"><span className="stage-kicker">YOUR SPACES</span><h2>Everything in<br/><b>its right place.</b></h2><div className="stage-focus"><div><span>STUDY</span><strong>04 tools</strong></div><div><span>PROJECTS</span><strong>03 active</strong></div><div><span>KNOWLEDGE</span><strong>12 notes</strong></div></div><div className="stage-line"><span>YOUR WORKSPACE</span><b>BUILT AROUND YOU</b><i><em/></i></div></div></div><div className="stage-float stage-score"><TrendingUp size={14}/><span>Progress</span><b>All in view</b></div><div className="stage-float stage-mission"><Target size={14}/><span>Next step</span><b>Keep moving</b></div></div></section>
+ <section className="landing-manifesto-v2"><div className="manifesto-index">01 / THE PRINCIPLE</div><div><h2>Ready when you are.<br/><em>Never one-size-fits-all.</em></h2><p>AvenroOS starts with useful, purpose-built Spaces. Add the ones that fit, create your own when you need something different, and keep everything in one place without building a system from scratch.</p></div></section>
+ <section className="landing-modules-v2" id="spaces"><div className="module-heading"><span>02 / YOUR WORKSPACES</span><h2>Different parts of life.<br/><em>One connected system.</em></h2><p className="catalog-intro">Choose a ready-made Space or create a workspace of your own. Each one has a clear purpose and a focused set of tools.</p></div><div className="module-grid-v2">
+ <article className="module-large"><div className="module-number">01 / LEARNING</div><BookOpen/><h3>Study</h3><p>Keep learning organised with subject-based tasks, assignments, exam preparation, scores and focused sessions.</p><div className="module-demo"><span>INSIDE STUDY</span><b>Tasks · Exams · Scores</b><small>Preparation, performance and focus</small></div></article>
+ <article className="module-dark"><div className="module-number">02 / WELLBEING</div><Gauge/><h3>Workout</h3><p>Keep routines, training notes and session records together. Build a consistent practice you can review.</p><div className="module-demo"><span>INSIDE WORKOUT</span><b>Routines & session logs</b><small>Training plans · Milestones</small></div></article>
+ <article className="module-dark"><div className="module-number">03 / GETTING THINGS DONE</div><Command/><h3>Projects</h3><p>Give each project a home. Capture the goal, organise next actions and keep progress visible.</p><div className="module-demo"><span>INSIDE PROJECTS</span><b>Ideas → Actions</b><small>Project notes · Progress</small></div></article>
+ <article className="module-accent"><div className="module-number">04 / THINKING</div><BookOpen/><h3>Knowledge</h3><p>Collect notes, references and useful ideas in a place you can return to whenever you need them.</p><div className="module-demo"><span>INSIDE KNOWLEDGE</span><b>A library of what you learn</b><small>Notes · Collections · Ideas</small></div></article>
+ <article className="module-wide"><div><div className="module-number">05 / YOUR SYSTEM</div><Sparkles/><h3>Custom Spaces</h3><p>Need something different? Create a Space with your own name, purpose and icon. Your workspace can grow as your priorities change.</p></div><div className="journey-demo"><span>YOUR WORKSPACE</span><b>Built around the way you work.</b><i><em/></i></div></article></div></section>
+ <section className="landing-manifesto-v2 landing-how"><div className="manifesto-index">03 / HOW IT WORKS</div><div><h2>A useful start.<br/><em>Room to make it yours.</em></h2><div className="landing-steps"><div><b>01</b><strong>Choose a template</strong><p>Add a ready-made Space with a clear purpose.</p></div><div><b>02</b><strong>Make your own</strong><p>Create a custom Space whenever your needs don't fit a template.</p></div><div><b>03</b><strong>Keep it connected</strong><p>Bring your Spaces together in one workspace and switch between them easily.</p></div></div></div></section>
+ <section className="landing-close-v2"><span>04 / BEGIN</span><h2>Your system.<br/><em>Your direction.</em></h2><div className="landing-close-actions"><button className="landing-primary-v2" onClick={start}>Build your workspace <ChevronRight size={17}/></button><button className="landing-text-v2" onClick={p.onAnonymous}>Explore first <ArrowUpRight size={16}/></button></div></section>
+ <footer className="landing-footer"><div className="welcome-brand"><div className="brand-mark"><img src={AVENROOS_ICON} alt="" aria-hidden="true"/></div><strong>AvenroOS</strong></div><span>A considered space for everything that matters.</span><button onClick={start}>Get started <ChevronRight size={15}/></button></footer>
+ </main></>}
 
-  <section className="landing-manifesto-v2">
-   <div className="manifesto-index">01 / THE IDEA</div>
-   <div><h2>School is already complicated.<br/><em>Your tools shouldn't be.</em></h2><p>AvenroOS turns the scattered pieces of school into one clear system. You decide the goal. AvenroOS keeps the next move visible.</p></div>
-  </section>
-
-  <section className="landing-modules-v2">
-   <div className="module-heading"><span>02 / THE SYSTEM</span><h2>Everything you need.<br/><em>Nothing you don't.</em></h2></div>
-   <div className="module-grid-v2">
-    <article className="module-large"><div className="module-number">01</div><BookOpen/><h3>Study</h3><p>Turn a pile of schoolwork into a focused list of things you can actually finish.</p><div className="module-demo"><span>UP NEXT</span><b>Quadratics practice</b><small>45 min · Today</small></div></article>
-    <article className="module-dark"><div className="module-number">02</div><CalendarDays/><h3>Exams</h3><p>Know what is coming, what you've covered, and where your preparation stands.</p><div className="module-demo"><span>NEXT EXAM</span><b>Mathematics</b><small>12 days · 6 lessons</small></div></article>
-    <article className="module-dark"><div className="module-number">03</div><TrendingUp/><h3>Scores</h3><p>Keep assessments in one place and make progress visible over time.</p><div className="module-demo score-demo"><span>AVERAGE</span><b>92%</b><small>↑ 6% this term</small></div></article>
-    <article className="module-accent"><div className="module-number">04</div><Clock3/><h3>Focus</h3><p>When it's time to work, remove the noise and start the clock.</p><div className="module-demo timer-demo"><b>25:00</b><small>ONE SESSION · ONE OBJECTIVE</small></div></article>
-    <article className="module-wide"><div><div className="module-number">05</div><Target/><h3>Journey</h3><p>Name the thing you're working toward and keep it visible. College, a score, a skill — it's yours.</p></div><div className="journey-demo"><span>YOUR JOURNEY</span><b>90%+ MISSION</b><i><em/></i></div></article>
-   </div>
-  </section>
-
-  <section className="landing-close-v2">
-   <span>03 / START HERE</span>
-   <h2>Your next move<br/><em>starts here.</em></h2>
-   <div className="landing-close-actions"><button className="landing-primary-v2" onClick={()=>p.openAuth("signup")}>Get started <ChevronRight size={17}/></button><button className="landing-text-v2" onClick={p.onAnonymous}>Try anonymously <ArrowUpRight size={16}/></button></div>
-  </section>
- </main>
- </>
-}
-function pageTitle(p:Page){return {dashboard:"Dashboard",study:"Study",exams:"Exams",scores:"Scores",focus:"Focus",journey:"Journey",settings:"Settings"}[p]}
+function pageTitle(p:Page){return {dashboard:"Home",spaces:"Explore Spaces","space-detail":"Your Space",study:"Study",exams:"Exams",scores:"Scores",focus:"Focus",journey:"Journey",settings:"Settings"}[p]}
 
 export default App;
