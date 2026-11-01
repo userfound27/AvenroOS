@@ -798,3 +798,37 @@ input:focus,.setting-input:focus,.field input:focus{border-color:#ff704c;outline
 :root[data-density="compact"] .settings-space-row{padding:8px 0}
 :root[data-motion="reduced"] *,:root[data-motion="reduced"] *::before,:root[data-motion="reduced"] *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 @media(max-width:640px){.settings-overview{align-items:flex-start;flex-direction:column;padding:20px}.settings-choice-grid{grid-template-columns:1fr}.settings-page .settings-panel{padding:0 15px}.settings-space-row{gap:9px}.settings-space-toggle{flex-direction:column;gap:3px}}
+
+
+/* AvenroOS settings: applied themes, accents and preferences */
+:root{--accent:#ff754d;--app-bg:#0b1419;--app-panel:#0e1119;--app-surface:#101923;--app-text:#eef2ff;--app-muted:#8b95a3;--app-border:#263541}
+:root[data-accent="orange"]{--accent:#ff754d}
+:root[data-accent="blue"]{--accent:#5b9cf5}
+:root[data-accent="violet"]{--accent:#a58af5}
+:root[data-accent="green"]{--accent:#59c99a}
+:root[data-motion="full"] *, :root[data-motion="full"] *::before, :root[data-motion="full"] *::after{transition-property:background-color,color,border-color,box-shadow,opacity,transform,filter!important;transition-duration:.42s!important;transition-timing-function:cubic-bezier(.2,.75,.25,1)!important}
+:root[data-motion="reduced"] *, :root[data-motion="reduced"] *::before, :root[data-motion="reduced"] *::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+:root[data-density="compact"] .panel{padding:13px}
+:root[data-density="compact"] .task-row{padding-top:7px;padding-bottom:7px}
+:root[data-density="compact"] .nav-item{padding-top:8px;padding-bottom:8px}
+:root[data-theme="light"]{color-scheme:light;--app-bg:#f4f5f3;--app-panel:#ffffff;--app-surface:#f8faf9;--app-text:#19252c;--app-muted:#65747c;--app-border:#dce3e5;background:var(--app-bg);color:var(--app-text)}
+:root[data-theme="light"] body,:root[data-theme="light"] .app-shell,:root[data-theme="light"] .main{background:var(--app-bg);color:var(--app-text)}
+:root[data-theme="light"] .sidebar,:root[data-theme="light"] .topbar{background:rgba(250,252,251,.92);color:var(--app-text);border-color:var(--app-border)}
+:root[data-theme="light"] .panel,:root[data-theme="light"] .settings-overview,:root[data-theme="light"] .home-metric,:root[data-theme="light"] .home-space-card,:root[data-theme="light"] .stat-card,:root[data-theme="light"] .setting-block{background:var(--app-panel);color:var(--app-text);border-color:var(--app-border)}
+:root[data-theme="light"] .content,:root[data-theme="light"] .page-intro h2,:root[data-theme="light"] .panel h3,:root[data-theme="light"] .setting-block h3,:root[data-theme="light"] .setting-block strong,:root[data-theme="light"] .home-activity-copy strong{color:var(--app-text)}
+:root[data-theme="light"] .page-intro p,:root[data-theme="light"] .setting-block p,:root[data-theme="light"] .panel p,:root[data-theme="light"] .muted,:root[data-theme="light"] .home-muted{color:var(--app-muted)}
+:root[data-theme="light"] input,:root[data-theme="light"] textarea,:root[data-theme="light"] select,:root[data-theme="light"] .setting-input{background:#fff;color:#19252c;border-color:var(--app-border)}
+:root[data-theme="light"] .ghost-btn,:root[data-theme="light"] .icon-btn,:root[data-theme="light"] .filter,:root[data-theme="light"] .settings-choice,:root[data-theme="light"] .accent-option{background:#f8faf9;color:#26343b;border-color:var(--app-border)}
+:root[data-theme="light"] .nav-item{color:#5f6d75}
+:root[data-theme="light"] .nav-item.active{background:color-mix(in srgb,var(--accent) 13%,white);color:var(--accent)}
+:root[data-theme="light"] .progress{background:#e5eaeb}
+:root[data-theme="light"] .progress i,:root[data-theme="light"] .primary-btn,:root[data-theme="light"] .landing-primary-v2{background:var(--accent);border-color:var(--accent)}
+:root[data-theme="light"] .task-row,:root[data-theme="light"] .home-activity-row,:root[data-theme="light"] .settings-space-row{border-color:var(--app-border)}
+:root[data-theme="light"] .home-activity-row,:root[data-theme="light"] .home-upcoming-row,:root[data-theme="light"] .text-btn{color:var(--accent)}
+:root[data-theme="light"] .hero-card,:root[data-theme="light"] .focus-card,:root[data-theme="light"] .journey-card{background:#fff;color:var(--app-text);border-color:var(--app-border)}
+:root[data-theme="light"] .hero-card p,:root[data-theme="light"] .focus-card p,:root[data-theme="light"] .journey-card p{color:var(--app-muted)}
+:root[data-theme="light"] .modal{background:#fff;color:var(--app-text);border-color:var(--app-border)}
+:root[data-theme="light"] .modal-backdrop{background:rgba(30,43,48,.35)}
+:root[data-theme="light"] .landing-page,:root[data-theme="light"] .welcome-main-v2{background:#f4f5f3;color:var(--app-text)}
+:root[data-theme="light"] .landing-hero-copy h1,:root[data-theme="light"] .landing-punchline{color:var(--app-text)}
+:root[data-theme="light"] .landing-hero-copy p{color:var(--app-muted)}
