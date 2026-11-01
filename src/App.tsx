@@ -478,7 +478,7 @@ const widgetGroups=[
  {id:"ambient",name:"Ambient & utility",widgets:[
  {id:"clock",name:"Live clock",description:"Keep the current time visible."},
  {id:"calculator",name:"Calculator",description:"Do quick arithmetic inside your Space."},
- {id:"ambient",name:"Ambient focus",description:"A calm visual focus panel with optional sound."},
+ {id:"ambient",name:"Ambient focus",description:"A calm breathing visual to create a quieter focus moment."},
  {id:"progress",name:"Progress bar",description:"Track a percentage or milestone."},
  {id:"goal",name:"Goal tracker",description:"See how close you are to a target."},
  {id:"habit",name:"Habit tracker",description:"Mark a daily habit complete."},
