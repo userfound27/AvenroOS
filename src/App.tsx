@@ -239,13 +239,13 @@ function SettingsPage(p:{mode:"anonymous"|"account";onSignIn:()=>void;accountErr
   <PageIntro title="Settings" text="Shape how your workspace looks, feels and works."/>
   <section className="settings-overview panel"><div><span className="eyebrow">WORKSPACE STATUS</span><h2>{enabled.length} active {enabled.length===1?"Space":"Spaces"}</h2><p>{p.mode==="account"?"Your workspace is connected and syncing.":"You're using an anonymous session. Your changes are temporary."}</p></div><button className="ghost-btn" onClick={p.onHome}>View Home <ChevronRight size={15}/></button></section>
   <section className="panel settings-panel">
-   <SettingBlock title="Appearance" text="Choose the visual environment for your AvenroOS workspace.">
+   <SettingBlock title="Appearance" text="Choose the visual environment for your AvenroOS workspace." right={null}>
     <div className="settings-choice-grid"><button className={appearance==="dark"?"settings-choice selected":"settings-choice"} onClick={()=>setAppearance("dark")}><span className="appearance-swatch dark-swatch"/> <strong>Dark</strong><small>Focused and understated</small></button><button className={appearance==="light"?"settings-choice selected":"settings-choice"} onClick={()=>setAppearance("light")}><span className="appearance-swatch light-swatch"/> <strong>Light</strong><small>Bright and minimal</small></button></div>
    </SettingBlock>
-   <SettingBlock title="Accent colour" text="Set the highlight colour used for actions, active states and progress.">
+   <SettingBlock title="Accent colour" text="Set the highlight colour used for actions, active states and progress." right={null}>
     <div className="accent-options">{[{id:"orange",label:"Ember",color:"#ff754d"},{id:"blue",label:"Ocean",color:"#5b9cf5"},{id:"violet",label:"Iris",color:"#a58af5"},{id:"green",label:"Sage",color:"#59c99a"}].map(x=><button key={x.id} className={accent===x.id?"accent-option selected":"accent-option"} onClick={()=>setAccent(x.id)} aria-label={x.label+" accent"}><i style={{background:x.color}}/><span>{x.label}</span>{accent===x.id&&<Check size={14}/>}</button>)}</div>
    </SettingBlock>
-   <SettingBlock title="Interface preferences" text="Adjust the workspace density and motion to suit your workflow.">
+   <SettingBlock title="Interface preferences" text="Adjust the workspace density and motion to suit your workflow." right={null}>
     <div className="settings-switch-list"><label><span><strong>Compact layout</strong><small>Fit more information on screen</small></span><input type="checkbox" checked={compact} onChange={e=>setCompact(e.target.checked)}/></label><label><span><strong>Interface animations</strong><small>Use subtle transitions and feedback</small></span><input type="checkbox" checked={motion} onChange={e=>setMotion(e.target.checked)}/></label></div>
    </SettingBlock>
   </section>
