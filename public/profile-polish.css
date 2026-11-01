@@ -310,7 +310,7 @@
   }
 }
 
-/* Profile avatar visual system — orange StudentOS treatment */
+/* Profile avatar visual system — orange AvenroOS treatment */
 .avatar {
   position: relative;
   overflow: hidden;
@@ -593,7 +593,7 @@ body{background:var(--ui-bg)}
 
 
 /* =========================================================
-   STUDENTOS — PRODUCT REWORK
+   AVENROOS — PRODUCT REWORK
    Direction: editorial whitespace + quiet surfaces + student energy.
    Inspired by premium product design principles, not copied UI.
    Profile controls above are intentionally left untouched.
@@ -1157,7 +1157,7 @@ body{
 
 
 /* =========================================================
-   STUDENTOS — VISUAL REWORK V2
+   AVENROOS — VISUAL REWORK V2
    Premium, expressive, student-first. No copied layouts.
    ========================================================= */
 
@@ -1202,7 +1202,7 @@ body{
   opacity:.9;
 }
 
-/* Open drawer: the actual StudentOS symbol gets its own space. */
+/* Open drawer: the actual AvenroOS symbol gets its own space. */
 .sidebar:not(.collapsed) .brand{
   padding-left:10px;
   padding-right:8px;
@@ -1464,7 +1464,7 @@ body{
 .sidebar-toggle::after{display:none}
 
 /* When the drawer opens, the page header travels with the main content.
-   This keeps the StudentOS heading clear of the X instead of sitting behind it. */
+   This keeps the AvenroOS heading clear of the X instead of sitting behind it. */
 .main{
   transition:margin-left .38s cubic-bezier(.16,1,.3,1),width .38s cubic-bezier(.16,1,.3,1);
 }
@@ -1482,7 +1482,7 @@ body{
 
 
 /* =========================================================
-   STUDENTOS — GOATED PRODUCT REWORK
+   AVENROOS — GOATED PRODUCT REWORK
    Inspiration principles: product storytelling, cinematic
    composition, restraint, hierarchy, motion. Original UI.
    ========================================================= */
@@ -1899,7 +1899,7 @@ body{
 .welcome-main-v2{position:relative}
 @media(max-width:760px){.topbar{padding-left:82px;padding-right:92px}.scroll-object-v2{right:-25px;top:130px;width:70px;height:70px}.scroll-object-core{width:42px;height:42px}}
 
-/* STUDENTOS PRODUCT THEME — shared across landing, auth and app */
+/* AVENROOS PRODUCT THEME — shared across landing, auth and app */
 :root{
   --product-bg:#080a0d;
   --product-surface:#0e1318;
@@ -1949,7 +1949,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--product-accent);box-s
 .settings-panel,.setting-block{background:var(--product-surface);border-color:var(--product-border)}
 
 /* =========================================================
-   STUDENTOS V4 — cohesive product language
+   AVENROOS V4 — cohesive product language
    Intent: designed system, not template dashboard.
    ========================================================= */
 :root{
@@ -2143,7 +2143,7 @@ button,input,select,textarea{font-family:inherit}
 
 /* Keep the no-JS fallback visually inside the same product language */
 
-/* Setup/auth must use the same StudentOS surface — no legacy blue */
+/* Setup/auth must use the same AvenroOS surface — no legacy blue */
 .auth-backdrop{background:rgba(5,7,9,.78)!important}
 .setup-modal{
   background:linear-gradient(145deg,#12181e 0%,#0d1217 100%)!important;
@@ -2192,7 +2192,7 @@ button,input,select,textarea{font-family:inherit}
 
 
 /* =========================================================
-   STUDENTOS — MOBILE PWA REFINEMENT
+   AVENROOS — MOBILE PWA REFINEMENT
    The installed app should feel designed for a phone, not
    like desktop UI compressed into a narrow viewport.
    ========================================================= */
