@@ -1024,3 +1024,25 @@ textarea:focus-visible{outline-color:var(--accent)!important}
  background:color-mix(in srgb,var(--accent) 10%,#fff)!important;
  color:#1b272d!important;
 }
+
+/* Legacy brand palette now follows the selected accent token everywhere */
+:root{
+ --avenro-coral:var(--accent);
+ --avenro-coral-soft:color-mix(in srgb,var(--accent) 72%,white);
+ --avenro-accent-glow:color-mix(in srgb,var(--accent) 18%,transparent);
+ --avenro-accent-wash:color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.brand-mark,.welcome-brand .brand-mark,.stage-mark,.primary-btn,.nav-auth-btn,.landing-primary-v2,.task-row.done .check-btn,.progress i,.goal-progress i,.stage-line>i>em,.journey-demo em,.habit-day.is-done span,.habit-toggle.done{background:var(--accent)!important;border-color:var(--accent)!important}
+.brand-mark{box-shadow:0 10px 28px var(--avenro-accent-glow)!important}
+.nav-item.active,.filter.active,.settings-choice.selected,.accent-option.selected{color:var(--accent)!important;border-color:var(--accent)!important;background:var(--avenro-accent-wash)!important}
+.landing-hero-copy h1 em,.landing-manifesto-v2 h2 em,.module-heading h2 em,.landing-close-v2 h2 em,.landing-eyebrow,.manifesto-index,.module-heading>span,.landing-close-v2>span,.stage-body h2 b,.stage-float svg,.module-grid-v2 article svg,.assessment-card-percent,.goal-milestone-track strong,.mission-icon,.stat-icon,.text-btn{color:var(--accent)!important}
+.hero-card,.focus-card,.module-accent{border-color:color-mix(in srgb,var(--accent) 32%,var(--app-border,#263746))!important}
+.hero-card{background:radial-gradient(circle at 84% 48%,var(--avenro-accent-wash),transparent 27%),linear-gradient(135deg,#151e27,#0f171f)!important}
+.focus-card{background:radial-gradient(circle at 50% 25%,var(--avenro-accent-wash),transparent 43%),#101923!important}
+.stat-icon,.mission-icon,.goal-achievements,.habit-streak,.habit-toggle{background:var(--avenro-accent-wash)!important}
+.score-chart-line{stroke:var(--accent)!important}.score-chart-point{fill:var(--avenro-coral-soft)!important}
+.stage-glow{background:radial-gradient(circle,var(--avenro-accent-glow),transparent 68%)!important}
+.module-accent{background:radial-gradient(500px 300px at 80% 30%,var(--avenro-accent-wash),transparent 65%),#101a24!important}
+.primary-btn{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 76%,white))!important;box-shadow:0 10px 28px var(--avenro-accent-glow)!important}
+.nav-auth-btn{background:var(--accent)!important;border-color:var(--accent)!important}
+.progress i,.goal-progress i{background:linear-gradient(90deg,var(--accent),var(--avenro-coral-soft))!important}
