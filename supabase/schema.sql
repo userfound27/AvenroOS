@@ -1,4 +1,4 @@
--- StudentOS cloud storage
+-- AvenroOS cloud storage
 -- Run this in Supabase SQL Editor after creating a Supabase project.
 
 create table if not exists public.studentos_profiles (
@@ -14,18 +14,18 @@ create table if not exists public.studentos_profiles (
 
 alter table public.studentos_profiles enable row level security;
 
-drop policy if exists "Users can read their own StudentOS data" on public.studentos_profiles;
-create policy "Users can read their own StudentOS data"
+drop policy if exists "Users can read their own AvenroOS data" on public.studentos_profiles;
+create policy "Users can read their own AvenroOS data"
   on public.studentos_profiles for select
   using (auth.uid() = id);
 
-drop policy if exists "Users can insert their own StudentOS data" on public.studentos_profiles;
-create policy "Users can insert their own StudentOS data"
+drop policy if exists "Users can insert their own AvenroOS data" on public.studentos_profiles;
+create policy "Users can insert their own AvenroOS data"
   on public.studentos_profiles for insert
   with check (auth.uid() = id);
 
-drop policy if exists "Users can update their own StudentOS data" on public.studentos_profiles;
-create policy "Users can update their own StudentOS data"
+drop policy if exists "Users can update their own AvenroOS data" on public.studentos_profiles;
+create policy "Users can update their own AvenroOS data"
   on public.studentos_profiles for update
   using (auth.uid() = id)
   with check (auth.uid() = id);
